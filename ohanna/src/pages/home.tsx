@@ -269,7 +269,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {TESTIMONIALS.map((t, i) => (
               <FadeUp key={i} delay={i * 0.07}>
-                <div className="bg-[#FDF8EF] text-[#1B1B1B] border-2 border-[#FDF8EF]/30 p-5 h-full">
+                <div className="bg-[#FDF8EF] text-[#1B1B1B] rounded-2xl border border-[#FDF8EF]/20 p-5 h-full shadow-lg">
                   <div className="flex text-[#C89D29] mb-3">
                     {[...Array(t.rating)].map((_, j) => (
                       <Star key={j} className="h-3.5 w-3.5 fill-current" />
