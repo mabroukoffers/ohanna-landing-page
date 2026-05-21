@@ -1,20 +1,56 @@
 import { Router } from "express";
 import { randomUUID } from "crypto";
 import { asyncHandler } from "../middlewares";
+import { products, orders, contacts } from "../db/queries";
 
 const router = Router();
 
-const contacts: any[] = [];
-const orders: any[] = [];
+/**
+ * Products endpoints
+ */
+router.get(
+  "/products",
+  asyncHandler(async (_req, res) => {
+    const allProducts = await products.getAll();
+    res.json({ products: allProducts });
+  })
+);
 
+router.get(
+  "/products/:id",
+  asyncHandler(async (req, res) => {
+    const product = await products.getById(req.params.id);
+    if (!product) {
+      res.status(404).json({ error: "Product not found" });
+      return;
+    }
+    res.json(product);
+  })
+);
+
+router.get(
+  "/products/category/:category",
+  asyncHandler(async (req, res) => {
+    const categoryProducts = await products.getByCategory(req.params.category);
+    res.json({ products: categoryProducts });
+  })
+);
+
+/**
+ * Checkout endpoint
+ */
 router.post(
   "/checkout",
   asyncHandler(async (req, res) => {
-    const { items, successUrl, cancelUrl } = req.body as {
-      items: any[];
-      successUrl: string;
-      cancelUrl: string;
-    };
+    const { items, successUrl, cancelUrl, customerEmail, customerName, shippingAddress } =
+      req.body as {
+        items: any[];
+        successUrl: string;
+        cancelUrl: string;
+        customerEmail: string;
+        customerName: string;
+        shippingAddress: any;
+      };
 
     if (!items?.length) {
       res.status(400).json({ error: "Cart is empty" });
@@ -22,6 +58,9 @@ router.post(
     }
 
     const stripeKey = process.env["STRIPE_SECRET_KEY"];
+    let sessionId: string;
+    let checkoutUrl: string;
+
     if (stripeKey && stripeKey.startsWith("sk_")) {
       try {
         const Stripe = (await import("stripe")).default;
@@ -34,7 +73,7 @@ router.post(
               name: item.product.name,
               description: item.product.description?.slice(0, 200),
             },
-            unit_amount: item.product.price * 100,
+            unit_amount: item.product.price,
           },
           quantity: item.quantity,
         }));
@@ -48,30 +87,42 @@ router.post(
           metadata: { source: "ohanna" },
         });
 
-        res.json({ url: session.url, sessionId: session.id });
-        return;
+        sessionId = session.id;
+        checkoutUrl = session.url || "";
       } catch (stripeErr: unknown) {
         console.error("Stripe error:", stripeErr);
+        // Fall back to mock order
+        sessionId = `mock_${randomUUID()}`;
+        checkoutUrl = successUrl;
       }
+    } else {
+      // Mock checkout
+      sessionId = `mock_${randomUUID()}`;
+      checkoutUrl = successUrl;
     }
 
-    // Fallback to mock order
+    // Create order in database
     const orderId = `OHN-${Date.now()}`;
     const total = items.reduce((s: number, i: any) => s + i.product.price * i.quantity, 0);
 
-    orders.push({
+    await orders.create({
       id: orderId,
+      stripeSessionId: sessionId,
+      customerEmail,
+      customerName,
+      shippingAddress,
       items,
       total,
-      status: "confirmed",
-      created_at: new Date().toISOString(),
+      status: "pending",
     });
 
-    const mockUrl = `${successUrl.replace("{CHECKOUT_SESSION_ID}", orderId)}&order_id=${orderId}&total=${total}`;
-    res.json({ url: mockUrl, sessionId: orderId });
+    res.json({ url: checkoutUrl, sessionId, orderId });
   })
 );
 
+/**
+ * Contact endpoint
+ */
 router.post(
   "/contact",
   asyncHandler(async (req, res) => {
@@ -93,19 +144,21 @@ router.post(
       return;
     }
 
-    contacts.push({
+    await contacts.create({
       id: randomUUID(),
       name: name.trim(),
       email: email.trim().toLowerCase(),
       subject: (subject ?? "").trim(),
       message: message.trim(),
-      created_at: new Date().toISOString(),
     });
 
     res.json({ success: true, message: "Message received. We'll reply within 24 hours." });
   })
 );
 
+/**
+ * Order tracking endpoint
+ */
 router.get(
   "/track-order",
   asyncHandler(async (req, res) => {
@@ -117,11 +170,9 @@ router.get(
       return;
     }
 
-    const order = orders.find(
-      (o) => o.id === id && (!o.customer_email || o.customer_email === email),
-    );
+    const order = await orders.getById(id);
 
-    if (!order) {
+    if (!order || order.customerEmail !== email) {
       res.status(404).json({ error: "Order not found." });
       return;
     }
@@ -130,13 +181,9 @@ router.get(
   })
 );
 
-router.get(
-  "/products",
-  asyncHandler(async (_req, res) => {
-    res.json({ products: [] });
-  })
-);
-
+/**
+ * Setup endpoint
+ */
 router.get(
   "/setup",
   asyncHandler(async (_req, res) => {
