@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import { randomUUID } from "crypto";
 import { asyncHandler } from "../middlewares";
-import { products, orders, contacts } from "../db/queries";
+import { productQueries, orderQueries, contactQueries } from "../db/queries";
 import { logger } from "../lib/logger";
 
 const router = Router();
@@ -17,7 +17,7 @@ router.get(
   "/products",
   asyncHandler(async (_req: Request, res: Response) => {
     try {
-      const allProducts = await products.getAll();
+      const allProducts = await productQueries.getAll();
       res.json({ products: allProducts });
     } catch (err) {
       logger.warn("Database unavailable, returning empty products");
@@ -30,7 +30,12 @@ router.get(
   "/products/:id",
   asyncHandler(async (req: Request, res: Response) => {
     try {
-      const product = await products.getById(req.params.id);
+      // Try to get by ID first, then by slug
+      let product = await productQueries.getById(req.params.id);
+      if (!product) {
+        product = await productQueries.getBySlug(req.params.id);
+      }
+
       if (!product) {
         res.status(404).json({ error: "Product not found" });
         return;
@@ -47,10 +52,23 @@ router.get(
   "/products/category/:category",
   asyncHandler(async (req: Request, res: Response) => {
     try {
-      const categoryProducts = await products.getByCategory(req.params.category);
+      const categoryProducts = await productQueries.getByCategory(req.params.category);
       res.json({ products: categoryProducts });
     } catch (err) {
       logger.warn("Database unavailable, returning empty products");
+      res.json({ products: [] });
+    }
+  })
+);
+
+router.get(
+  "/products/search/:query",
+  asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const searchResults = await productQueries.search(req.params.query);
+      res.json({ products: searchResults });
+    } catch (err) {
+      logger.warn("Database unavailable for search");
       res.json({ products: [] });
     }
   })
@@ -126,7 +144,7 @@ router.post(
     const total = items.reduce((s: number, i: any) => s + i.product.price * i.quantity, 0);
 
     try {
-      await orders.create({
+      await orderQueries.create({
         id: orderId,
         stripeSessionId: sessionId,
         customerEmail,
@@ -189,7 +207,7 @@ router.post(
     };
 
     try {
-      await contacts.create(contactData);
+      await contactQueries.create(contactData);
     } catch (err) {
       logger.warn("Database unavailable, storing contact in memory");
       inMemoryContacts.push({
@@ -217,7 +235,7 @@ router.get(
     }
 
     try {
-      const order = await orders.getById(id);
+      const order = await orderQueries.getById(id);
 
       if (!order || order.customerEmail !== email) {
         res.status(404).json({ error: "Order not found." });

@@ -61608,81 +61608,206 @@ pool.on("error", (err) => {
 });
 var db = drizzle(pool, { schema: schema_exports });
 
-// src/db/queries.ts
-var products = {
+// src/db/queries/products.ts
+var productQueries2 = {
+  /**
+   * Get all products
+   */
   async getAll() {
-    return db.select().from(productsTable);
+    return db.select().from(productsTable).orderBy(desc(productsTable.createdAt));
   },
+  /**
+   * Get product by ID
+   */
   async getById(id) {
     const result = await db.select().from(productsTable).where(eq(productsTable.id, id));
     return result[0];
   },
+  /**
+   * Get product by slug
+   */
   async getBySlug(slug) {
     const result = await db.select().from(productsTable).where(eq(productsTable.slug, slug));
     return result[0];
   },
+  /**
+   * Get products by category
+   */
   async getByCategory(category) {
-    return db.select().from(productsTable).where(eq(productsTable.category, category));
+    return db.select().from(productsTable).where(eq(productsTable.category, category)).orderBy(desc(productsTable.createdAt));
   },
+  /**
+   * Search products by name
+   */
   async search(query) {
-    return db.select().from(productsTable).where(like(productsTable.name, `%${query}%`));
+    return db.select().from(productsTable).where(like(productsTable.name, `%${query}%`)).orderBy(desc(productsTable.createdAt));
   },
+  /**
+   * Create product
+   */
   async create(data) {
     const result = await db.insert(productsTable).values(data).returning();
     return result[0];
   },
+  /**
+   * Update product
+   */
   async update(id, data) {
     const result = await db.update(productsTable).set({ ...data, updatedAt: /* @__PURE__ */ new Date() }).where(eq(productsTable.id, id)).returning();
     return result[0];
   },
+  /**
+   * Delete product
+   */
   async delete(id) {
     const result = await db.delete(productsTable).where(eq(productsTable.id, id));
     return result.rowCount > 0;
+  },
+  /**
+   * Update product stock
+   */
+  async updateStock(id, quantity) {
+    const product = await this.getById(id);
+    if (!product) return void 0;
+    const newStock = Math.max(0, product.stock - quantity);
+    return this.update(id, { stock: newStock });
+  },
+  /**
+   * Get low stock products
+   */
+  async getLowStock(threshold = 10) {
+    return db.select().from(productsTable).where(eq(productsTable.stock, threshold)).orderBy(desc(productsTable.createdAt));
   }
 };
-var orders = {
+
+// src/db/queries/orders.ts
+var orderQueries2 = {
+  /**
+   * Get all orders
+   */
   async getAll() {
     return db.select().from(ordersTable).orderBy(desc(ordersTable.createdAt));
   },
+  /**
+   * Get order by ID
+   */
   async getById(id) {
     const result = await db.select().from(ordersTable).where(eq(ordersTable.id, id));
     return result[0];
   },
+  /**
+   * Get orders by customer email
+   */
   async getByCustomerEmail(email3) {
     return db.select().from(ordersTable).where(eq(ordersTable.customerEmail, email3)).orderBy(desc(ordersTable.createdAt));
   },
+  /**
+   * Get order by Stripe session ID
+   */
   async getByStripeSessionId(sessionId) {
     const result = await db.select().from(ordersTable).where(eq(ordersTable.stripeSessionId, sessionId));
     return result[0];
   },
+  /**
+   * Create order
+   */
   async create(data) {
     const result = await db.insert(ordersTable).values(data).returning();
     return result[0];
   },
+  /**
+   * Update order
+   */
   async update(id, data) {
     const result = await db.update(ordersTable).set({ ...data, updatedAt: /* @__PURE__ */ new Date() }).where(eq(ordersTable.id, id)).returning();
     return result[0];
   },
+  /**
+   * Update order status
+   */
   async updateStatus(id, status) {
     const result = await db.update(ordersTable).set({ status, updatedAt: /* @__PURE__ */ new Date() }).where(eq(ordersTable.id, id)).returning();
     return result[0];
+  },
+  /**
+   * Delete order
+   */
+  async delete(id) {
+    const result = await db.delete(ordersTable).where(eq(ordersTable.id, id));
+    return result.rowCount > 0;
+  },
+  /**
+   * Get orders by status
+   */
+  async getByStatus(status) {
+    return db.select().from(ordersTable).where(eq(ordersTable.status, status)).orderBy(desc(ordersTable.createdAt));
+  },
+  /**
+   * Get pending orders
+   */
+  async getPending() {
+    return this.getByStatus("pending");
+  },
+  /**
+   * Get paid orders
+   */
+  async getPaid() {
+    return this.getByStatus("paid");
+  },
+  /**
+   * Get shipped orders
+   */
+  async getShipped() {
+    return this.getByStatus("shipped");
+  },
+  /**
+   * Get delivered orders
+   */
+  async getDelivered() {
+    return this.getByStatus("delivered");
   }
 };
-var contacts = {
+
+// src/db/queries/contacts.ts
+var contactQueries2 = {
+  /**
+   * Get all contacts
+   */
   async getAll() {
     return db.select().from(contactsTable).orderBy(desc(contactsTable.createdAt));
   },
+  /**
+   * Get contact by ID
+   */
   async getById(id) {
     const result = await db.select().from(contactsTable).where(eq(contactsTable.id, id));
     return result[0];
   },
+  /**
+   * Get contacts by email
+   */
+  async getByEmail(email3) {
+    return db.select().from(contactsTable).where(eq(contactsTable.email, email3)).orderBy(desc(contactsTable.createdAt));
+  },
+  /**
+   * Create contact
+   */
   async create(data) {
     const result = await db.insert(contactsTable).values(data).returning();
     return result[0];
   },
+  /**
+   * Delete contact
+   */
   async delete(id) {
     const result = await db.delete(contactsTable).where(eq(contactsTable.id, id));
     return result.rowCount > 0;
+  },
+  /**
+   * Get recent contacts
+   */
+  async getRecent(limit = 10) {
+    return db.select().from(contactsTable).orderBy(desc(contactsTable.createdAt)).limit(limit);
   }
 };
 
@@ -61694,7 +61819,7 @@ router2.get(
   "/products",
   asyncHandler(async (_req, res) => {
     try {
-      const allProducts = await products.getAll();
+      const allProducts = await productQueries2.getAll();
       res.json({ products: allProducts });
     } catch (err) {
       logger.warn("Database unavailable, returning empty products");
@@ -61706,7 +61831,10 @@ router2.get(
   "/products/:id",
   asyncHandler(async (req, res) => {
     try {
-      const product = await products.getById(req.params.id);
+      let product = await productQueries2.getById(req.params.id);
+      if (!product) {
+        product = await productQueries2.getBySlug(req.params.id);
+      }
       if (!product) {
         res.status(404).json({ error: "Product not found" });
         return;
@@ -61722,10 +61850,22 @@ router2.get(
   "/products/category/:category",
   asyncHandler(async (req, res) => {
     try {
-      const categoryProducts = await products.getByCategory(req.params.category);
+      const categoryProducts = await productQueries2.getByCategory(req.params.category);
       res.json({ products: categoryProducts });
     } catch (err) {
       logger.warn("Database unavailable, returning empty products");
+      res.json({ products: [] });
+    }
+  })
+);
+router2.get(
+  "/products/search/:query",
+  asyncHandler(async (req, res) => {
+    try {
+      const searchResults = await productQueries2.search(req.params.query);
+      res.json({ products: searchResults });
+    } catch (err) {
+      logger.warn("Database unavailable for search");
       res.json({ products: [] });
     }
   })
@@ -61778,7 +61918,7 @@ router2.post(
     const orderId = `OHN-${Date.now()}`;
     const total = items.reduce((s, i) => s + i.product.price * i.quantity, 0);
     try {
-      await orders.create({
+      await orderQueries2.create({
         id: orderId,
         stripeSessionId: sessionId,
         customerEmail,
@@ -61827,7 +61967,7 @@ router2.post(
       message: message.trim()
     };
     try {
-      await contacts.create(contactData);
+      await contactQueries2.create(contactData);
     } catch (err) {
       logger.warn("Database unavailable, storing contact in memory");
       inMemoryContacts.push({
@@ -61848,7 +61988,7 @@ router2.get(
       return;
     }
     try {
-      const order = await orders.getById(id);
+      const order = await orderQueries2.getById(id);
       if (!order || order.customerEmail !== email3) {
         res.status(404).json({ error: "Order not found." });
         return;
