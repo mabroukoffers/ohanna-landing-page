@@ -1,14 +1,9 @@
 import React from "react";
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { useColors } from "@/hooks/useColors";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+
 import { BADGE_COLORS, fmt, getImageUrl } from "@/constants/products";
-import { BD, COL2, FS, RD, SP } from "@/constants/theme";
+import { BD, COL2, FS, LS, RD, SHADOW, SP } from "@/constants/theme";
+import { useColors } from "@/hooks/useColors";
 import type { Product } from "@/constants/products";
 
 interface Props {
@@ -24,6 +19,7 @@ export function ProductCard({ product, onPress }: Props) {
     <Pressable
       style={({ pressed }) => [
         styles.card,
+        { ...SHADOW.sm },
         {
           width: COL2,
           backgroundColor: colors.card,
@@ -63,8 +59,8 @@ export function ProductCard({ product, onPress }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: BD.md,
-    borderRadius: RD.none,
+    borderWidth: BD.thin,
+    borderRadius: RD.md,
     overflow: "hidden",
     marginBottom: SP.md,
   },
@@ -81,23 +77,23 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: SP.sm,
     left: SP.sm,
-    paddingHorizontal: SP.sm - 1,
+    paddingHorizontal: SP.sm,
     paddingVertical: SP.xs - 1,
-    borderRadius: RD.badge,
+    borderRadius: RD.xs,
   },
   badgeText: {
     fontSize: FS.micro,
     fontFamily: "Inter_700Bold",
-    letterSpacing: 0.8,
+    letterSpacing: LS.wide,
   },
   info: {
-    padding: SP.md - 2,
-    gap: SP.xs - 2,
+    padding: SP.md,
+    gap: SP.xs - 1,
   },
   name: {
     fontSize: FS.md,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 0.5,
+    letterSpacing: LS.normal,
   },
   category: {
     fontSize: FS.sm,
@@ -106,6 +102,6 @@ const styles = StyleSheet.create({
   price: {
     fontSize: FS.base,
     fontFamily: "Inter_700Bold",
-    marginTop: SP.xs - 2,
+    marginTop: SP.xs,
   },
 });

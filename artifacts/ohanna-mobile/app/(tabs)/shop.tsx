@@ -14,7 +14,7 @@ import {
 
 import { ProductCard } from "@/components/ProductCard";
 import { CATEGORIES, PRODUCTS, getProductsByCategory } from "@/constants/products";
-import { BD, FS, GRID_GAP, GRID_PAD, SP } from "@/constants/theme";
+import { BD, FS, GRID_GAP, GRID_PAD, LS, RD, SHADOW, SP } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 export default function ShopScreen() {
@@ -50,14 +50,24 @@ export default function ShopScreen() {
         <Text style={[styles.headerTitle, { color: colors.foreground }]}>SACRED COLLECTION</Text>
         <Text style={[styles.headerSub, { color: colors.primary }]}>𓂀 {PRODUCTS.length} PIECES</Text>
 
-        <View style={[styles.searchRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        {/* Search bar */}
+        <View
+          style={[
+            styles.searchRow,
+            { ...SHADOW.xs },
+            { backgroundColor: colors.card, borderColor: colors.border },
+          ]}
+        >
           <Feather name="search" size={14} color={colors.mutedForeground} />
           <TextInput
             value={search}
             onChangeText={setSearch}
             placeholder="Search pieces..."
             placeholderTextColor={colors.mutedForeground}
-            style={[styles.searchInput, { color: colors.foreground, fontFamily: "Inter_400Regular" }]}
+            style={[
+              styles.searchInput,
+              { color: colors.foreground, fontFamily: "Inter_400Regular" },
+            ]}
           />
           {search.length > 0 && (
             <Pressable onPress={() => setSearch("")}>
@@ -66,6 +76,7 @@ export default function ShopScreen() {
           )}
         </View>
 
+        {/* Filter chips */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chips}>
           {CATEGORIES.map((cat) => {
             const active = cat === activeCategory;
@@ -75,9 +86,10 @@ export default function ShopScreen() {
                 style={[
                   styles.chip,
                   {
-                    backgroundColor: active ? colors.foreground : "transparent",
+                    backgroundColor: active ? colors.foreground : colors.card,
                     borderColor: active ? colors.foreground : colors.border,
                   },
+                  !active && SHADOW.xs,
                 ]}
                 onPress={() => setActiveCategory(cat)}
               >
@@ -98,8 +110,12 @@ export default function ShopScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.grid}>
         {filtered.length === 0 ? (
           <View style={styles.empty}>
-            <Feather name="search" size={32} color={colors.mutedForeground} />
-            <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>No pieces found</Text>
+            <View style={[styles.emptyIcon, { backgroundColor: colors.secondary }]}>
+              <Feather name="search" size={28} color={colors.mutedForeground} />
+            </View>
+            <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
+              No pieces found
+            </Text>
           </View>
         ) : (
           <View style={styles.gridInner}>
@@ -123,17 +139,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: GRID_PAD,
     paddingBottom: SP.md,
     borderBottomWidth: BD.thin,
-    gap: SP.md - 2,
+    gap: SP.sm,
   },
   headerTitle: {
     fontSize: FS.xxl,
     fontFamily: "Cinzel_900Black",
-    letterSpacing: 2,
+    letterSpacing: LS.widest,
   },
   headerSub: {
     fontSize: FS.xs,
     fontFamily: "Inter_500Medium",
-    letterSpacing: 1,
+    letterSpacing: LS.wide,
     marginTop: -SP.xs,
   },
   searchRow: {
@@ -141,8 +157,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: SP.sm,
     paddingHorizontal: SP.md,
-    paddingVertical: SP.md - 3,
-    borderWidth: BD.md,
+    paddingVertical: SP.sm + 2,
+    borderWidth: BD.thin,
+    borderRadius: RD.lg,
   },
   searchInput: {
     flex: 1,
@@ -156,13 +173,14 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: SP.md,
     paddingVertical: SP.xs + 2,
-    borderWidth: BD.md,
+    borderWidth: BD.thin,
+    borderRadius: RD.pill,
     marginRight: SP.sm,
   },
   chipText: {
     fontSize: FS.xxs,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 1,
+    letterSpacing: LS.wide,
   },
   grid: {
     flexGrow: 1,
@@ -180,6 +198,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: SP.md,
     paddingVertical: 80,
+  },
+  emptyIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: RD.circle,
+    alignItems: "center",
+    justifyContent: "center",
   },
   emptyText: {
     fontSize: FS.lg,

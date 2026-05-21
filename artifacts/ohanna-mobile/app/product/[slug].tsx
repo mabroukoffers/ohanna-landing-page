@@ -16,7 +16,7 @@ import {
 
 import { GoldDivider } from "@/components/GoldDivider";
 import { BADGE_COLORS, SIZES, fmt, getImageUrl, getProductBySlug } from "@/constants/products";
-import { BD, BTN_H, FS, GRID_PAD, RD, SP } from "@/constants/theme";
+import { BD, BTN_H, FS, GRID_PAD, LS, RD, SHADOW, SP } from "@/constants/theme";
 import { useCart } from "@/contexts/CartContext";
 import { useColors } from "@/hooks/useColors";
 
@@ -35,8 +35,12 @@ export default function ProductScreen() {
       <View style={[styles.notFound, { backgroundColor: colors.background }]}>
         <Text style={[styles.nfGlyph, { color: colors.primary }]}>𓂀</Text>
         <Text style={[styles.nfTitle, { color: colors.foreground }]}>PIECE NOT FOUND</Text>
-        <Pressable onPress={() => router.back()}>
-          <Text style={[styles.nfBack, { color: colors.primary }]}>← GO BACK</Text>
+        <Pressable
+          style={[styles.nfBack, { backgroundColor: colors.secondary }]}
+          onPress={() => router.back()}
+        >
+          <Feather name="arrow-left" size={14} color={colors.foreground} />
+          <Text style={[styles.nfBackText, { color: colors.foreground }]}>GO BACK</Text>
         </Pressable>
       </View>
     );
@@ -67,7 +71,11 @@ export default function ProductScreen() {
             </View>
           )}
           <Pressable
-            style={[styles.backBtn, { backgroundColor: "rgba(27,27,27,0.72)" }]}
+            style={[
+              styles.backBtn,
+              { ...SHADOW.md },
+              { backgroundColor: "rgba(27,27,27,0.76)" },
+            ]}
             onPress={() => router.back()}
           >
             <Feather name="arrow-left" size={20} color="#FDF8EF" />
@@ -75,14 +83,16 @@ export default function ProductScreen() {
         </View>
 
         <View style={styles.content}>
-          <Text style={[styles.category, { color: colors.primary }]}>
-            {product.category.toUpperCase()}
-          </Text>
+          <View style={[styles.categoryPill, { backgroundColor: colors.primary + "18" }]}>
+            <Text style={[styles.category, { color: colors.primary }]}>
+              {product.category.toUpperCase()}
+            </Text>
+          </View>
           <Text style={[styles.name, { color: colors.foreground }]}>{product.name}</Text>
 
           <View style={styles.ratingRow}>
             {[1, 2, 3, 4, 5].map((i) => (
-              <Feather key={i} name="star" size={14} color={colors.primary} />
+              <Feather key={i} name="star" size={13} color={colors.primary} />
             ))}
             <Text style={[styles.ratingText, { color: colors.mutedForeground }]}>
               4.9 (128 reviews)
@@ -105,7 +115,14 @@ export default function ProductScreen() {
               <Text style={[styles.sizeLabel, { color: colors.foreground }]}>
                 SIZE — <Text style={{ color: colors.primary }}>{selectedSize}</Text>
               </Text>
-              <Text style={[styles.sizeGuide, { color: colors.primary }]}>SIZE GUIDE</Text>
+              <Pressable
+                style={[styles.sizeGuidePill, { backgroundColor: colors.secondary }]}
+                onPress={() => router.push("/size-guide")}
+              >
+                <Text style={[styles.sizeGuideText, { color: colors.mutedForeground }]}>
+                  SIZE GUIDE
+                </Text>
+              </Pressable>
             </View>
             <View style={styles.sizes}>
               {SIZES.map((s) => {
@@ -115,8 +132,9 @@ export default function ProductScreen() {
                     key={s}
                     style={[
                       styles.sizeBtn,
+                      active && SHADOW.xs,
                       {
-                        backgroundColor: active ? colors.foreground : "transparent",
+                        backgroundColor: active ? colors.foreground : colors.card,
                         borderColor: active ? colors.foreground : colors.border,
                       },
                     ]}
@@ -141,16 +159,22 @@ export default function ProductScreen() {
             <Text style={[styles.qtyLabel, { color: colors.foreground }]}>QUANTITY</Text>
             <View style={styles.qtyRow}>
               <Pressable
-                style={[styles.qtyBtn, { borderColor: colors.border }]}
-                onPress={() => {
-                  if (quantity > 1) { setQuantity((q) => q - 1); Haptics.selectionAsync(); }
-                }}
+                style={[
+                  styles.qtyBtn,
+                  { ...SHADOW.xs },
+                  { borderColor: colors.border, backgroundColor: colors.card },
+                ]}
+                onPress={() => { if (quantity > 1) { setQuantity((q) => q - 1); Haptics.selectionAsync(); } }}
               >
                 <Feather name="minus" size={16} color={colors.foreground} />
               </Pressable>
               <Text style={[styles.qtyNum, { color: colors.foreground }]}>{quantity}</Text>
               <Pressable
-                style={[styles.qtyBtn, { borderColor: colors.border }]}
+                style={[
+                  styles.qtyBtn,
+                  { ...SHADOW.xs },
+                  { borderColor: colors.border, backgroundColor: colors.card },
+                ]}
                 onPress={() => { setQuantity((q) => q + 1); Haptics.selectionAsync(); }}
               >
                 <Feather name="plus" size={16} color={colors.foreground} />
@@ -158,15 +182,18 @@ export default function ProductScreen() {
             </View>
           </View>
 
-          {/* Features */}
+          {/* Feature pills */}
           <View style={styles.features}>
             {[
               { icon: "refresh-cw" as const, text: "FREE RETURNS" },
-              { icon: "shield" as const, text: "SECURE PAYMENT" },
-              { icon: "zap" as const, text: "FAST SHIPPING" },
+              { icon: "shield"     as const, text: "SECURE PAYMENT" },
+              { icon: "zap"        as const, text: "FAST SHIPPING" },
             ].map((f) => (
-              <View key={f.text} style={[styles.featureItem, { borderColor: colors.border }]}>
-                <Feather name={f.icon} size={16} color={colors.primary} />
+              <View
+                key={f.text}
+                style={[styles.featureItem, { backgroundColor: colors.card, borderColor: colors.border }]}
+              >
+                <Feather name={f.icon} size={15} color={colors.primary} />
                 <Text style={[styles.featureText, { color: colors.mutedForeground }]}>{f.text}</Text>
               </View>
             ))}
@@ -176,7 +203,7 @@ export default function ProductScreen() {
         <View style={{ height: 110 }} />
       </ScrollView>
 
-      {/* Pinned add-to-cart */}
+      {/* Pinned add-to-cart bar */}
       <View
         style={[
           styles.addToCartBar,
@@ -190,6 +217,7 @@ export default function ProductScreen() {
         <Pressable
           style={({ pressed }) => [
             styles.addBtn,
+            added ? SHADOW.gold : SHADOW.sm,
             {
               backgroundColor: added ? colors.accent : colors.foreground,
               opacity: pressed ? 0.85 : 1,
@@ -212,11 +240,19 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: SP.lg - 2,
+    gap: SP.lg,
   },
   nfGlyph: { fontSize: 40 },
-  nfTitle: { fontSize: FS.xxl, fontFamily: "Cinzel_700Bold", letterSpacing: 2 },
-  nfBack: { fontSize: FS.base, fontFamily: "Inter_600SemiBold" },
+  nfTitle: { fontSize: FS.xxl, fontFamily: "Cinzel_700Bold", letterSpacing: LS.widest },
+  nfBack: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SP.xs,
+    paddingHorizontal: SP.lg,
+    paddingVertical: SP.sm,
+    borderRadius: RD.pill,
+  },
+  nfBackText: { fontSize: FS.base, fontFamily: "Inter_600SemiBold" },
   imageContainer: {
     width: "100%",
     height: 360,
@@ -227,14 +263,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: GRID_PAD,
     left: GRID_PAD,
-    paddingHorizontal: SP.md - 2,
-    paddingVertical: SP.xs + 1,
-    borderRadius: RD.badge,
+    paddingHorizontal: SP.sm,
+    paddingVertical: SP.xs,
+    borderRadius: RD.xs,
   },
   badgeText: {
     fontSize: FS.xs,
     fontFamily: "Inter_700Bold",
-    letterSpacing: 1,
+    letterSpacing: LS.wide,
   },
   backBtn: {
     position: "absolute",
@@ -248,23 +284,29 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: GRID_PAD,
-    gap: SP.lg - 2,
+    gap: SP.md,
+  },
+  categoryPill: {
+    alignSelf: "flex-start",
+    paddingHorizontal: SP.md,
+    paddingVertical: SP.xs,
+    borderRadius: RD.pill,
   },
   category: {
     fontSize: FS.xs,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 2,
+    letterSpacing: LS.widest,
   },
   name: {
     fontSize: FS.h2,
     fontFamily: "Cinzel_900Black",
-    letterSpacing: 1,
+    letterSpacing: LS.wide,
     lineHeight: 30,
   },
   ratingRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: SP.xs,
+    gap: SP.xs - 1,
   },
   ratingText: {
     fontSize: FS.md,
@@ -280,7 +322,7 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     lineHeight: 22,
   },
-  sizeSection: { gap: SP.md - 2 },
+  sizeSection: { gap: SP.sm },
   sizeHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -289,12 +331,17 @@ const styles = StyleSheet.create({
   sizeLabel: {
     fontSize: FS.sm,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 1.5,
+    letterSpacing: LS.wider,
   },
-  sizeGuide: {
+  sizeGuidePill: {
+    paddingHorizontal: SP.md,
+    paddingVertical: SP.xs,
+    borderRadius: RD.pill,
+  },
+  sizeGuideText: {
     fontSize: FS.xs,
     fontFamily: "Inter_500Medium",
-    letterSpacing: 0.5,
+    letterSpacing: LS.normal,
   },
   sizes: {
     flexDirection: "row",
@@ -304,7 +351,8 @@ const styles = StyleSheet.create({
   sizeBtn: {
     width: 48,
     height: 48,
-    borderWidth: BD.md,
+    borderWidth: BD.thin,
+    borderRadius: RD.sm,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -312,11 +360,11 @@ const styles = StyleSheet.create({
     fontSize: FS.md,
     fontFamily: "Cinzel_700Bold",
   },
-  qtySection: { gap: SP.md - 2 },
+  qtySection: { gap: SP.sm },
   qtyLabel: {
     fontSize: FS.sm,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 1.5,
+    letterSpacing: LS.wider,
   },
   qtyRow: {
     flexDirection: "row",
@@ -326,7 +374,8 @@ const styles = StyleSheet.create({
   qtyBtn: {
     width: 44,
     height: 44,
-    borderWidth: BD.md,
+    borderWidth: BD.thin,
+    borderRadius: RD.sm,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -342,15 +391,16 @@ const styles = StyleSheet.create({
   },
   featureItem: {
     flex: 1,
-    borderWidth: BD.md,
-    padding: SP.md - 2,
+    borderWidth: BD.thin,
+    borderRadius: RD.md,
+    padding: SP.md,
     alignItems: "center",
     gap: SP.xs + 2,
   },
   featureText: {
     fontSize: FS.micro,
     fontFamily: "Inter_700Bold",
-    letterSpacing: 0.5,
+    letterSpacing: LS.normal,
     textAlign: "center",
   },
   addToCartBar: {
@@ -366,13 +416,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: SP.md - 2,
+    gap: SP.md,
     paddingVertical: SP.lg,
     minHeight: BTN_H.lg,
+    borderRadius: RD.sm,
   },
   addBtnText: {
     fontSize: FS.sm,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 1.5,
+    letterSpacing: LS.wider,
   },
 });

@@ -17,7 +17,7 @@ import {
 
 import { GoldDivider } from "@/components/GoldDivider";
 import { getApiBase } from "@/constants/products";
-import { BD, BTN_H, FS, GRID_PAD, SP } from "@/constants/theme";
+import { BD, BTN_H, FS, GRID_PAD, LS, RD, SHADOW, SP } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 export default function ContactScreen() {
@@ -64,7 +64,6 @@ export default function ContactScreen() {
       bottomOffset={16}
       keyboardShouldPersistTaps="handled"
     >
-      {/* Dark hero header */}
       <View
         style={[
           styles.header,
@@ -86,17 +85,23 @@ export default function ContactScreen() {
       <View style={[styles.content, { backgroundColor: colors.background }]}>
         <GoldDivider />
 
-        {/* Contact info chips */}
+        {/* Contact info */}
         <View style={styles.infoRow}>
           {[
             { icon: "map-pin" as const, text: "Maadi, Cairo, Egypt" },
-            { icon: "mail" as const, text: "info@ohanna.store" },
+            { icon: "mail"    as const, text: "info@ohanna.store" },
           ].map((c) => (
             <View
               key={c.text}
-              style={[styles.infoChip, { backgroundColor: colors.card, borderColor: colors.border }]}
+              style={[
+                styles.infoChip,
+                { ...SHADOW.xs },
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}
             >
-              <Feather name={c.icon} size={12} color={colors.primary} />
+              <View style={[styles.infoIconBg, { backgroundColor: colors.primary + "14" }]}>
+                <Feather name={c.icon} size={12} color={colors.primary} />
+              </View>
               <Text style={[styles.infoText, { color: colors.mutedForeground }]}>{c.text}</Text>
             </View>
           ))}
@@ -105,9 +110,9 @@ export default function ContactScreen() {
         <Text style={[styles.formTitle, { color: colors.foreground }]}>SEND A MESSAGE</Text>
 
         {[
-          { key: "name" as const, label: "FULL NAME *", placeholder: "Your name", type: "default" as const },
-          { key: "email" as const, label: "EMAIL *", placeholder: "your@email.com", type: "email-address" as const },
-          { key: "subject" as const, label: "SUBJECT", placeholder: "What's this about?", type: "default" as const },
+          { key: "name"    as const, label: "FULL NAME *",  placeholder: "Your name",            type: "default"       as const },
+          { key: "email"   as const, label: "EMAIL *",      placeholder: "your@email.com",        type: "email-address" as const },
+          { key: "subject" as const, label: "SUBJECT",      placeholder: "What's this about?",    type: "default"       as const },
         ].map((field) => (
           <View key={field.key} style={styles.fieldGroup}>
             <Text style={[styles.fieldLabel, { color: colors.mutedForeground }]}>{field.label}</Text>
@@ -156,7 +161,7 @@ export default function ContactScreen() {
           <View
             style={[
               styles.errorBox,
-              { backgroundColor: "rgba(174,28,28,0.1)", borderColor: colors.destructive },
+              { backgroundColor: "rgba(174,28,28,0.08)", borderColor: colors.destructive + "60" },
             ]}
           >
             <Feather name="alert-circle" size={14} color={colors.destructive} />
@@ -167,6 +172,7 @@ export default function ContactScreen() {
         <Pressable
           style={({ pressed }) => [
             styles.submitBtn,
+            { ...SHADOW.gold },
             { backgroundColor: colors.foreground, opacity: pressed || loading ? 0.85 : 1 },
           ]}
           onPress={handleSubmit}
@@ -194,31 +200,49 @@ const styles = StyleSheet.create({
     paddingBottom: SP.xxl,
     gap: SP.xs,
   },
-  backBtn: { marginBottom: SP.sm, width: 40 },
-  headerTitle: { fontSize: FS.h3, fontFamily: "Cinzel_900Black", letterSpacing: 2 },
-  headerSub: { fontSize: FS.xs, fontFamily: "Cinzel_700Bold", letterSpacing: 2 },
-  content: { padding: GRID_PAD, gap: SP.lg - 2, flex: 1 },
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: RD.circle,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: SP.sm,
+  },
+  headerTitle: { fontSize: FS.h3, fontFamily: "Cinzel_900Black", letterSpacing: LS.widest },
+  headerSub: { fontSize: FS.xs, fontFamily: "Cinzel_700Bold", letterSpacing: LS.widest },
+  content: { padding: GRID_PAD, gap: SP.md, flex: 1 },
   infoRow: { gap: SP.sm },
   infoChip: {
     flexDirection: "row",
     alignItems: "center",
     gap: SP.sm,
-    padding: SP.md - 2,
-    borderWidth: BD.md,
+    padding: SP.md,
+    borderWidth: BD.thin,
+    borderRadius: RD.md,
+  },
+  infoIconBg: {
+    width: 28,
+    height: 28,
+    borderRadius: RD.sm,
+    alignItems: "center",
+    justifyContent: "center",
   },
   infoText: { fontSize: FS.md, fontFamily: "Inter_400Regular" },
-  formTitle: { fontSize: FS.base, fontFamily: "Cinzel_700Bold", letterSpacing: 2, marginTop: SP.xs },
+  formTitle: { fontSize: FS.base, fontFamily: "Cinzel_700Bold", letterSpacing: LS.widest, marginTop: SP.xs },
   fieldGroup: { gap: SP.xs + 2 },
-  fieldLabel: { fontSize: FS.xxs, fontFamily: "Cinzel_700Bold", letterSpacing: 1.5 },
+  fieldLabel: { fontSize: FS.xxs, fontFamily: "Cinzel_700Bold", letterSpacing: LS.wider },
   input: {
-    borderWidth: BD.md,
-    paddingHorizontal: SP.lg - 2,
+    borderWidth: BD.thin,
+    borderRadius: RD.sm,
+    paddingHorizontal: SP.md,
     paddingVertical: SP.md + 1,
     fontSize: FS.lg,
   },
   textarea: {
-    borderWidth: BD.md,
-    paddingHorizontal: SP.lg - 2,
+    borderWidth: BD.thin,
+    borderRadius: RD.sm,
+    paddingHorizontal: SP.md,
     paddingVertical: SP.md,
     fontSize: FS.lg,
     minHeight: 120,
@@ -230,15 +254,17 @@ const styles = StyleSheet.create({
     gap: SP.sm,
     padding: SP.md,
     borderWidth: BD.thin,
+    borderRadius: RD.sm,
   },
   errorText: { fontSize: FS.base, fontFamily: "Inter_400Regular", flex: 1 },
   submitBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: SP.md - 2,
+    gap: SP.md,
     paddingVertical: SP.lg,
     minHeight: BTN_H.lg,
+    borderRadius: RD.sm,
   },
-  submitBtnText: { fontSize: FS.sm, fontFamily: "Cinzel_700Bold", letterSpacing: 2 },
+  submitBtnText: { fontSize: FS.sm, fontFamily: "Cinzel_700Bold", letterSpacing: LS.widest },
 });

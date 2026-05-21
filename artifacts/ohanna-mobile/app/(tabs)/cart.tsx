@@ -18,7 +18,7 @@ import {
 
 import { GoldDivider } from "@/components/GoldDivider";
 import { fmt, getApiBase, getImageUrl } from "@/constants/products";
-import { BD, BTN_H, FS, GRID_PAD, SP } from "@/constants/theme";
+import { BD, BTN_H, FS, GRID_PAD, LS, RD, SHADOW, SP } from "@/constants/theme";
 import { useCart } from "@/contexts/CartContext";
 import { useColors } from "@/hooks/useColors";
 
@@ -47,7 +47,6 @@ export default function CartScreen() {
         }),
       });
       const data = await res.json();
-
       if (data.error) throw new Error(data.error);
       if (!data.url) throw new Error("No redirect URL returned");
 
@@ -84,7 +83,9 @@ export default function CartScreen() {
           { backgroundColor: colors.background, paddingTop: topPad + SP.xxl },
         ]}
       >
-        <Text style={[styles.emptyGlyph, { color: colors.primary }]}>𓂀</Text>
+        <View style={[styles.emptyGlyphCircle, { backgroundColor: colors.secondary }]}>
+          <Text style={[styles.emptyGlyph, { color: colors.primary }]}>𓂀</Text>
+        </View>
         <Text style={[styles.emptyTitle, { color: colors.foreground }]}>YOUR CART IS EMPTY</Text>
         <Text style={[styles.emptySub, { color: colors.mutedForeground }]}>
           The desert awaits your choice, Pharaoh.
@@ -92,11 +93,12 @@ export default function CartScreen() {
         <Pressable
           style={({ pressed }) => [
             styles.browseBtn,
-            { backgroundColor: colors.foreground, opacity: pressed ? 0.8 : 1 },
+            { ...SHADOW.gold },
+            { backgroundColor: colors.primary, opacity: pressed ? 0.8 : 1 },
           ]}
           onPress={() => router.push("/(tabs)/shop")}
         >
-          <Text style={[styles.browseBtnText, { color: colors.background }]}>
+          <Text style={[styles.browseBtnText, { color: colors.primaryForeground }]}>
             BROWSE COLLECTION
           </Text>
         </Pressable>
@@ -129,7 +131,11 @@ export default function CartScreen() {
         {items.map((item) => (
           <View
             key={`${item.product.id}-${item.size}`}
-            style={[styles.itemCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+            style={[
+              styles.itemCard,
+              { ...SHADOW.sm },
+              { backgroundColor: colors.card, borderColor: colors.border },
+            ]}
           >
             <Image
               source={{ uri: getImageUrl(item.product.image_url) }}
@@ -140,47 +146,47 @@ export default function CartScreen() {
               <Text style={[styles.itemName, { color: colors.foreground }]} numberOfLines={1}>
                 {item.product.name}
               </Text>
-              <Text style={[styles.itemSize, { color: colors.mutedForeground }]}>
-                SIZE: {item.size}
-              </Text>
+              <View style={[styles.sizePill, { backgroundColor: colors.secondary }]}>
+                <Text style={[styles.itemSize, { color: colors.foreground }]}>
+                  SIZE: {item.size}
+                </Text>
+              </View>
               <Text style={[styles.itemPrice, { color: colors.primary }]}>
                 {fmt(item.product.price)}
               </Text>
               <View style={styles.qtyRow}>
                 <Pressable
-                  style={[styles.qtyBtn, { borderColor: colors.border }]}
-                  onPress={() => {
-                    Haptics.selectionAsync();
-                    updateQuantity(item.product.id, item.size, item.quantity - 1);
-                  }}
+                  style={[styles.qtyBtn, { borderColor: colors.border, backgroundColor: colors.card }]}
+                  onPress={() => { Haptics.selectionAsync(); updateQuantity(item.product.id, item.size, item.quantity - 1); }}
                 >
-                  <Feather name="minus" size={14} color={colors.foreground} />
+                  <Feather name="minus" size={13} color={colors.foreground} />
                 </Pressable>
                 <Text style={[styles.qtyNum, { color: colors.foreground }]}>{item.quantity}</Text>
                 <Pressable
-                  style={[styles.qtyBtn, { borderColor: colors.border }]}
-                  onPress={() => {
-                    Haptics.selectionAsync();
-                    updateQuantity(item.product.id, item.size, item.quantity + 1);
-                  }}
+                  style={[styles.qtyBtn, { borderColor: colors.border, backgroundColor: colors.card }]}
+                  onPress={() => { Haptics.selectionAsync(); updateQuantity(item.product.id, item.size, item.quantity + 1); }}
                 >
-                  <Feather name="plus" size={14} color={colors.foreground} />
+                  <Feather name="plus" size={13} color={colors.foreground} />
                 </Pressable>
                 <Pressable
-                  style={styles.removeBtn}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    removeItem(item.product.id, item.size);
-                  }}
+                  style={[styles.removeBtn, { backgroundColor: colors.destructive + "14" }]}
+                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); removeItem(item.product.id, item.size); }}
                 >
-                  <Feather name="trash-2" size={14} color={colors.destructive} />
+                  <Feather name="trash-2" size={13} color={colors.destructive} />
                 </Pressable>
               </View>
             </View>
           </View>
         ))}
 
-        <View style={[styles.summary, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        {/* Summary */}
+        <View
+          style={[
+            styles.summary,
+            { ...SHADOW.sm },
+            { backgroundColor: colors.card, borderColor: colors.border },
+          ]}
+        >
           <GoldDivider />
           <View style={styles.summaryRow}>
             <Text style={[styles.summaryLabel, { color: colors.mutedForeground }]}>SUBTOTAL</Text>
@@ -188,7 +194,9 @@ export default function CartScreen() {
           </View>
           <View style={styles.summaryRow}>
             <Text style={[styles.summaryLabel, { color: colors.mutedForeground }]}>SHIPPING</Text>
-            <Text style={[styles.summaryValue, { color: colors.accent }]}>FREE</Text>
+            <View style={[styles.freeBadge, { backgroundColor: colors.accent }]}>
+              <Text style={[styles.freeBadgeText, { color: colors.accentForeground }]}>FREE</Text>
+            </View>
           </View>
           <GoldDivider />
           <View style={styles.summaryRow}>
@@ -200,6 +208,7 @@ export default function CartScreen() {
         <Pressable
           style={({ pressed }) => [
             styles.checkoutBtn,
+            { ...SHADOW.gold },
             { backgroundColor: colors.foreground, opacity: pressed || loading ? 0.85 : 1 },
           ]}
           onPress={handleCheckout}
@@ -225,14 +234,21 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: GRID_PAD - SP.xs,
+    gap: GRID_PAD,
     paddingHorizontal: 40,
   },
-  emptyGlyph: { fontSize: 48 },
+  emptyGlyphCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: RD.circle,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  emptyGlyph: { fontSize: 36 },
   emptyTitle: {
     fontSize: FS.xxl,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 2,
+    letterSpacing: LS.widest,
     textAlign: "center",
   },
   emptySub: {
@@ -243,27 +259,28 @@ const styles = StyleSheet.create({
   },
   browseBtn: {
     paddingVertical: SP.lg,
-    paddingHorizontal: SP.xxxl - SP.xs,
+    paddingHorizontal: SP.xxxl,
     marginTop: SP.sm,
     minHeight: BTN_H.lg,
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: RD.sm,
   },
   browseBtnText: {
     fontSize: FS.sm,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 1.5,
+    letterSpacing: LS.wider,
   },
   header: {
     paddingHorizontal: GRID_PAD,
-    paddingBottom: SP.lg - 2,
+    paddingBottom: SP.md,
     borderBottomWidth: BD.thin,
-    gap: SP.xs - 2,
+    gap: SP.xs,
   },
   headerTitle: {
     fontSize: FS.xxxl,
     fontFamily: "Cinzel_900Black",
-    letterSpacing: 2,
+    letterSpacing: LS.widest,
   },
   headerSub: {
     fontSize: FS.md,
@@ -271,7 +288,8 @@ const styles = StyleSheet.create({
   },
   itemCard: {
     flexDirection: "row",
-    borderWidth: BD.md,
+    borderWidth: BD.thin,
+    borderRadius: RD.md,
     overflow: "hidden",
   },
   itemImage: {
@@ -281,17 +299,23 @@ const styles = StyleSheet.create({
   itemInfo: {
     flex: 1,
     padding: SP.md,
-    gap: SP.xs - 1,
+    gap: SP.xs,
   },
   itemName: {
     fontSize: FS.md,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 0.5,
+    letterSpacing: LS.normal,
+  },
+  sizePill: {
+    alignSelf: "flex-start",
+    paddingHorizontal: SP.sm,
+    paddingVertical: SP.xs - 2,
+    borderRadius: RD.xs,
   },
   itemSize: {
     fontSize: FS.xs,
-    fontFamily: "Inter_500Medium",
-    letterSpacing: 1,
+    fontFamily: "Inter_700Bold",
+    letterSpacing: LS.wide,
   },
   itemPrice: {
     fontSize: FS.base,
@@ -300,13 +324,14 @@ const styles = StyleSheet.create({
   qtyRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: SP.sm,
-    marginTop: SP.xs,
+    gap: SP.xs + 2,
+    marginTop: SP.xs - 2,
   },
   qtyBtn: {
     width: 28,
     height: 28,
-    borderWidth: BD.md,
+    borderWidth: BD.thin,
+    borderRadius: RD.sm,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -318,11 +343,16 @@ const styles = StyleSheet.create({
   },
   removeBtn: {
     marginLeft: "auto",
-    padding: SP.xs,
+    width: 28,
+    height: 28,
+    borderRadius: RD.sm,
+    alignItems: "center",
+    justifyContent: "center",
   },
   summary: {
     padding: GRID_PAD,
-    borderWidth: BD.md,
+    borderWidth: BD.thin,
+    borderRadius: RD.md,
     gap: SP.md,
     marginTop: SP.xs,
   },
@@ -334,16 +364,26 @@ const styles = StyleSheet.create({
   summaryLabel: {
     fontSize: FS.xs,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 1.5,
+    letterSpacing: LS.wider,
   },
   summaryValue: {
     fontSize: FS.base,
     fontFamily: "Inter_600SemiBold",
   },
+  freeBadge: {
+    paddingHorizontal: SP.sm,
+    paddingVertical: SP.xs - 2,
+    borderRadius: RD.xs,
+  },
+  freeBadgeText: {
+    fontSize: FS.xs,
+    fontFamily: "Inter_700Bold",
+    letterSpacing: LS.wide,
+  },
   totalLabel: {
     fontSize: FS.base,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 2,
+    letterSpacing: LS.widest,
   },
   totalValue: {
     fontSize: FS.xl,
@@ -354,10 +394,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     minHeight: BTN_H.lg,
+    borderRadius: RD.sm,
   },
   checkoutBtnText: {
     fontSize: FS.md,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 2,
+    letterSpacing: LS.widest,
   },
 });

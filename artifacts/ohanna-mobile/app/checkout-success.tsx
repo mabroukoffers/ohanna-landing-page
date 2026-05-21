@@ -6,7 +6,7 @@ import React, { useEffect } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { GoldDivider } from "@/components/GoldDivider";
-import { BD, BTN_H, FS, GRID_PAD, RD, SP } from "@/constants/theme";
+import { BD, BTN_H, FS, GRID_PAD, LS, RD, SHADOW, SP } from "@/constants/theme";
 import { useCart } from "@/contexts/CartContext";
 import { useColors } from "@/hooks/useColors";
 
@@ -34,8 +34,17 @@ export default function CheckoutSuccessScreen() {
     >
       <Text style={[styles.glyphs, { color: colors.primary }]}>𓂀 𓋹 𓇯</Text>
 
-      <View style={[styles.iconCircle, { borderColor: colors.primary }]}>
-        <Feather name="check" size={40} color={colors.primary} />
+      {/* Success ring */}
+      <View
+        style={[
+          styles.iconRing,
+          { ...SHADOW.gold },
+          { borderColor: colors.primary },
+        ]}
+      >
+        <View style={[styles.iconInner, { backgroundColor: colors.primary + "18" }]}>
+          <Feather name="check" size={36} color={colors.primary} />
+        </View>
       </View>
 
       <Text style={[styles.title, { color: colors.background }]}>ORDER CONFIRMED</Text>
@@ -45,26 +54,33 @@ export default function CheckoutSuccessScreen() {
 
       <GoldDivider />
 
-      <View style={[styles.orderBox, { backgroundColor: "rgba(200,157,41,0.08)", borderColor: "rgba(200,157,41,0.3)" }]}>
-        <Text style={[styles.orderLabel, { color: "rgba(253,248,239,0.5)" }]}>ORDER ID</Text>
+      {/* Order summary box */}
+      <View
+        style={[
+          styles.orderBox,
+          { backgroundColor: "rgba(200,157,41,0.07)", borderColor: "rgba(200,157,41,0.25)" },
+        ]}
+      >
+        <Text style={[styles.orderLabel, { color: "rgba(253,248,239,0.45)" }]}>ORDER ID</Text>
         <Text style={[styles.orderId, { color: colors.primary }]}>{orderId}</Text>
         {params.total && (
           <>
-            <Text style={[styles.orderLabel, { color: "rgba(253,248,239,0.5)" }]}>TOTAL PAID</Text>
+            <View style={[styles.orderDivider, { backgroundColor: "rgba(200,157,41,0.2)" }]} />
+            <Text style={[styles.orderLabel, { color: "rgba(253,248,239,0.45)" }]}>TOTAL PAID</Text>
             <Text style={[styles.orderId, { color: colors.background }]}>EGP {params.total}</Text>
           </>
         )}
       </View>
 
-      <Text style={[styles.note, { color: "rgba(253,248,239,0.55)" }]}>
-        A confirmation email will be sent to you shortly. Track your order using the Order ID above.
+      <Text style={[styles.note, { color: "rgba(253,248,239,0.5)" }]}>
+        A confirmation email will be sent shortly. Track your order using the ID above.
       </Text>
 
       <View style={styles.actions}>
         <Pressable
           style={({ pressed }) => [
             styles.trackBtn,
-            { borderColor: colors.primary, opacity: pressed ? 0.8 : 1 },
+            { borderColor: colors.primary + "60", opacity: pressed ? 0.8 : 1 },
           ]}
           onPress={() => router.push("/track")}
         >
@@ -74,6 +90,7 @@ export default function CheckoutSuccessScreen() {
         <Pressable
           style={({ pressed }) => [
             styles.shopBtn,
+            { ...SHADOW.gold },
             { backgroundColor: colors.primary, opacity: pressed ? 0.85 : 1 },
           ]}
           onPress={() => router.replace("/(tabs)/shop")}
@@ -95,18 +112,25 @@ const styles = StyleSheet.create({
     gap: GRID_PAD,
   },
   glyphs: { fontSize: FS.xxxl, letterSpacing: 8 },
-  iconCircle: {
-    width: 80,
-    height: 80,
+  iconRing: {
+    width: 88,
+    height: 88,
     borderRadius: RD.circle,
     borderWidth: BD.thick,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconInner: {
+    width: 72,
+    height: 72,
+    borderRadius: RD.circle,
     alignItems: "center",
     justifyContent: "center",
   },
   title: {
     fontSize: FS.h1,
     fontFamily: "Cinzel_900Black",
-    letterSpacing: 2,
+    letterSpacing: LS.widest,
     textAlign: "center",
   },
   sub: {
@@ -118,34 +142,38 @@ const styles = StyleSheet.create({
   orderBox: {
     width: "100%",
     borderWidth: BD.thin,
+    borderRadius: RD.md,
     padding: GRID_PAD,
     alignItems: "center",
     gap: SP.xs,
   },
-  orderLabel: { fontSize: FS.xxs, fontFamily: "Cinzel_700Bold", letterSpacing: 2 },
-  orderId: { fontSize: FS.xxl, fontFamily: "Cinzel_700Bold", letterSpacing: 1 },
+  orderLabel: { fontSize: FS.xxs, fontFamily: "Cinzel_700Bold", letterSpacing: LS.widest },
+  orderId: { fontSize: FS.xxl, fontFamily: "Cinzel_700Bold", letterSpacing: LS.wide },
+  orderDivider: { width: "60%", height: 1, marginVertical: SP.xs },
   note: {
     fontSize: FS.md,
     fontFamily: "Inter_400Regular",
     textAlign: "center",
     lineHeight: 19,
   },
-  actions: { width: "100%", gap: SP.md, marginTop: SP.sm },
+  actions: { width: "100%", gap: SP.md, marginTop: SP.xs },
   trackBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: SP.sm,
     paddingVertical: SP.lg,
-    borderWidth: BD.md,
+    borderWidth: BD.thin,
+    borderRadius: RD.sm,
     minHeight: BTN_H.lg,
   },
-  trackBtnText: { fontSize: FS.sm, fontFamily: "Cinzel_700Bold", letterSpacing: 1.5 },
+  trackBtnText: { fontSize: FS.sm, fontFamily: "Cinzel_700Bold", letterSpacing: LS.wider },
   shopBtn: {
     paddingVertical: SP.lg,
     alignItems: "center",
     justifyContent: "center",
     minHeight: BTN_H.lg,
+    borderRadius: RD.sm,
   },
-  shopBtnText: { fontSize: FS.sm, fontFamily: "Cinzel_700Bold", letterSpacing: 1.5 },
+  shopBtnText: { fontSize: FS.sm, fontFamily: "Cinzel_700Bold", letterSpacing: LS.wider },
 });

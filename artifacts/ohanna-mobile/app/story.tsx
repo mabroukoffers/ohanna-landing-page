@@ -2,24 +2,24 @@ import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React from "react";
-import { Dimensions, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { GoldDivider } from "@/components/GoldDivider";
-import { BD, COL2, FS, GRID_GAP, GRID_PAD, SP } from "@/constants/theme";
+import { BD, COL2, FS, GRID_GAP, GRID_PAD, LS, RD, SHADOW, SP } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 const TIMELINE = [
   { year: "3100 BC", title: "THE ANCIENT INSPIRATION", desc: "Egyptian pharaohs adorned themselves in symbols of power — the Ankh, the Eye of Horus, the Scarab. These weren't just decorations; they were statements of identity and authority." },
-  { year: "2021", title: "THE VISION", desc: "In the streets of Cairo, two designers looked at ancient temple walls and asked: what if these symbols lived on hoodies, tees, and jackets? The seed of OHANNA was planted." },
-  { year: "2022", title: "THE BRAND", desc: "OHANNA launched its first collection — 6 pieces, all sold out in 48 hours. Cairo's streets confirmed what we believed: people hunger for fashion that honors their heritage." },
-  { year: "2023", title: "THE COMMUNITY", desc: "10,000 modern pharaohs joined the movement. OHANNA expanded to 12 core pieces and began shipping across Egypt and the Arab world." },
-  { year: "2024+", title: "THE FUTURE", desc: "We're building more than a brand — we're building a cultural movement. Ancient power, modern form. The revolution continues." },
+  { year: "2021",    title: "THE VISION",   desc: "In the streets of Cairo, two designers looked at ancient temple walls and asked: what if these symbols lived on hoodies, tees, and jackets? The seed of OHANNA was planted." },
+  { year: "2022",    title: "THE BRAND",    desc: "OHANNA launched its first collection — 6 pieces, all sold out in 48 hours. Cairo's streets confirmed what we believed: people hunger for fashion that honors their heritage." },
+  { year: "2023",    title: "THE COMMUNITY",desc: "10,000 modern pharaohs joined the movement. OHANNA expanded to 12 core pieces and began shipping across Egypt and the Arab world." },
+  { year: "2024+",   title: "THE FUTURE",   desc: "We're building more than a brand — we're building a cultural movement. Ancient power, modern form. The revolution continues." },
 ];
 
 const VALUES = [
-  { glyph: "𓋹", title: "HERITAGE FIRST", desc: "Every stitch honors thousands of years of Egyptian culture. We never compromise on cultural authenticity." },
-  { glyph: "𓇳", title: "BUILT TO LAST", desc: "Like the pyramids, our garments are engineered for longevity. Premium materials, uncompromising construction." },
-  { glyph: "𓂀", title: "STREET REBELLION", desc: "We blend ancient authority with modern defiance. Fashion is protest. Wear your roots loud." },
+  { glyph: "𓋹", title: "HERITAGE FIRST",  desc: "Every stitch honors thousands of years of Egyptian culture. We never compromise on cultural authenticity." },
+  { glyph: "𓇳", title: "BUILT TO LAST",   desc: "Like the pyramids, our garments are engineered for longevity. Premium materials, uncompromising construction." },
+  { glyph: "𓂀", title: "STREET REBELLION",desc: "We blend ancient authority with modern defiance. Fashion is protest. Wear your roots loud." },
   { glyph: "𓅃", title: "MADE WITH PRIDE", desc: "Proudly designed in Cairo. We celebrate Egyptian craftsmanship and support local artisans." },
   { glyph: "𓊽", title: "FOR THE CULTURE", desc: "OHANNA is for anyone who carries the fire of Egyptian ancestry in their DNA — wherever they are in the world." },
   { glyph: "𓆣", title: "ALWAYS WATCHING", desc: "Like the Eye of Horus, we guard cultural integrity. No appropriation, only authentic celebration." },
@@ -34,7 +34,6 @@ export default function StoryScreen() {
       style={{ flex: 1, backgroundColor: colors.background }}
       showsVerticalScrollIndicator={false}
     >
-      {/* Dark hero header */}
       <View
         style={[
           styles.header,
@@ -63,7 +62,7 @@ export default function StoryScreen() {
             <View style={[styles.yearBadge, { backgroundColor: colors.primary }]}>
               <Text style={[styles.yearText, { color: colors.primaryForeground }]}>{t.year}</Text>
             </View>
-            <View style={[styles.timelineContent, { borderLeftColor: colors.border }]}>
+            <View style={[styles.timelineContent, { borderLeftColor: colors.primary + "40" }]}>
               <Text style={[styles.timelineTitle, { color: colors.foreground }]}>{t.title}</Text>
               <Text style={[styles.timelineDesc, { color: colors.mutedForeground }]}>{t.desc}</Text>
             </View>
@@ -71,7 +70,7 @@ export default function StoryScreen() {
         ))}
       </View>
 
-      {/* Values grid — 2-col calculated width */}
+      {/* Values grid */}
       <View style={[styles.section, { backgroundColor: colors.foreground }]}>
         <Text style={[styles.sectionTitle, { color: colors.primary }]}>OUR VALUES</Text>
         <GoldDivider />
@@ -81,7 +80,7 @@ export default function StoryScreen() {
               key={v.title}
               style={[
                 styles.valueCard,
-                { width: COL2, borderColor: "rgba(200,157,41,0.3)" },
+                { width: COL2, borderColor: "rgba(200,157,41,0.25)", backgroundColor: "rgba(255,255,255,0.04)" },
               ]}
             >
               <Text style={[styles.valueGlyph, { color: colors.primary }]}>{v.glyph}</Text>
@@ -98,33 +97,38 @@ export default function StoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    padding: GRID_PAD,
-    paddingBottom: SP.xxxl,
-    gap: SP.sm,
+  header: { padding: GRID_PAD, paddingBottom: SP.xxxl, gap: SP.sm },
+  backBtn: {
+    marginBottom: SP.sm,
+    width: 36,
+    height: 36,
+    borderRadius: RD.circle,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  backBtn: { marginBottom: SP.sm, width: 40 },
   glyphs: { fontSize: FS.xxl, letterSpacing: 6 },
-  title: { fontSize: FS.h1, fontFamily: "Cinzel_900Black", letterSpacing: 2 },
+  title: { fontSize: FS.h1, fontFamily: "Cinzel_900Black", letterSpacing: LS.widest },
   sub: { fontSize: FS.lg, fontFamily: "Inter_400Regular", lineHeight: 22 },
   section: { padding: GRID_PAD, gap: GRID_PAD },
-  sectionTitle: { fontSize: FS.lg, fontFamily: "Cinzel_700Bold", letterSpacing: 2 },
-  timelineItem: { flexDirection: "row", gap: SP.lg - 2, alignItems: "flex-start" },
+  sectionTitle: { fontSize: FS.lg, fontFamily: "Cinzel_700Bold", letterSpacing: LS.widest },
+  timelineItem: { flexDirection: "row", gap: SP.md, alignItems: "flex-start" },
   yearBadge: {
     paddingHorizontal: SP.sm,
     paddingVertical: SP.xs,
     minWidth: 64,
     alignItems: "center",
+    borderRadius: RD.sm,
   },
-  yearText: { fontSize: FS.xs, fontFamily: "Cinzel_700Bold", letterSpacing: 0.5 },
+  yearText: { fontSize: FS.xs, fontFamily: "Cinzel_700Bold", letterSpacing: LS.normal },
   timelineContent: {
     flex: 1,
     borderLeftWidth: BD.thick,
-    paddingLeft: SP.lg - 2,
+    paddingLeft: SP.lg,
     paddingBottom: GRID_PAD,
     gap: SP.xs,
   },
-  timelineTitle: { fontSize: FS.md, fontFamily: "Cinzel_700Bold", letterSpacing: 1 },
+  timelineTitle: { fontSize: FS.md, fontFamily: "Cinzel_700Bold", letterSpacing: LS.wide },
   timelineDesc: { fontSize: FS.base, fontFamily: "Inter_400Regular", lineHeight: 20 },
   valuesGrid: {
     flexDirection: "row",
@@ -134,10 +138,11 @@ const styles = StyleSheet.create({
   },
   valueCard: {
     borderWidth: BD.thin,
-    padding: SP.lg - 2,
+    borderRadius: RD.md,
+    padding: SP.lg,
     gap: SP.xs + 2,
   },
   valueGlyph: { fontSize: FS.h3 },
-  valueTitle: { fontSize: FS.xs, fontFamily: "Cinzel_700Bold", letterSpacing: 1.5 },
+  valueTitle: { fontSize: FS.xs, fontFamily: "Cinzel_700Bold", letterSpacing: LS.wider },
   valueDesc: { fontSize: FS.sm, fontFamily: "Inter_400Regular", lineHeight: 17 },
 });

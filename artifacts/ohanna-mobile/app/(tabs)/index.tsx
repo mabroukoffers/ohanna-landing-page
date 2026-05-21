@@ -4,7 +4,6 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React from "react";
 import {
-  Dimensions,
   Image,
   Platform,
   Pressable,
@@ -17,11 +16,25 @@ import {
 import { GoldDivider } from "@/components/GoldDivider";
 import { ProductCard } from "@/components/ProductCard";
 import { PRODUCTS, getImageUrl } from "@/constants/products";
-import { BD, BTN_H, FS, GRID_GAP, GRID_PAD, SP } from "@/constants/theme";
+import { BD, BTN_H, FS, GRID_GAP, GRID_PAD, LS, RD, SHADOW, SP } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
-const { width } = Dimensions.get("window");
 const FEATURED = PRODUCTS.filter((p) => p.badge === "BESTSELLER" || p.badge === "LIMITED").slice(0, 4);
+
+const CATEGORIES = [
+  { label: "Hoodies",     icon: "layers" as const },
+  { label: "T-Shirts",    icon: "user" as const },
+  { label: "Jackets",     icon: "wind" as const },
+  { label: "Bottoms",     icon: "minus" as const },
+  { label: "Accessories", icon: "star" as const },
+];
+
+const STATS = [
+  { value: "10K+",  label: "PHARAOHS" },
+  { value: "5000+", label: "YRS HERITAGE" },
+  { value: "12+",   label: "SACRED PIECES" },
+  { value: "4.9★",  label: "RATING" },
+];
 
 export default function HomeScreen() {
   const colors = useColors();
@@ -34,19 +47,21 @@ export default function HomeScreen() {
       showsVerticalScrollIndicator={false}
       contentInsetAdjustmentBehavior="never"
     >
-      {/* Hero */}
+      {/* ── Hero ── */}
       <View style={[styles.hero, { paddingTop: topPad + SP.lg }]}>
         <LinearGradient colors={["#1B1B1B", "#2A1F0A"]} style={StyleSheet.absoluteFill} />
         <Text style={styles.hieroglyphStrip}>𓂀 𓋹 𓇯 𓊽 𓆣 𓐍 𓌀 𓃀</Text>
         <View style={styles.heroContent}>
           <Image
             source={{ uri: getImageUrl("/streetwear-egyptian-sketch.png") }}
-            style={[styles.heroImage, { borderColor: "rgba(200,157,41,0.4)" }]}
+            style={[styles.heroImage, { borderColor: "rgba(200,157,41,0.35)" }]}
             resizeMode="cover"
           />
           <View style={styles.heroText}>
             <Text style={[styles.heroTag, { color: colors.primary }]}>ANCIENT POWER</Text>
-            <Text style={[styles.heroTitle, { color: colors.background }]}>REVIVING{"\n"}ROOTS{"\n"}IN STYLE</Text>
+            <Text style={[styles.heroTitle, { color: colors.background }]}>
+              REVIVING{"\n"}ROOTS{"\n"}IN STYLE
+            </Text>
             <Text style={[styles.heroSub, { color: "rgba(253,248,239,0.65)" }]}>
               5,000 years of pharaonic power meets modern urban fashion.
             </Text>
@@ -65,14 +80,9 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Stats row */}
-      <View style={[styles.stats, { backgroundColor: colors.primary }]}>
-        {[
-          { value: "10K+", label: "PHARAOHS" },
-          { value: "5000+", label: "YRS HERITAGE" },
-          { value: "12+", label: "SACRED PIECES" },
-          { value: "4.9★", label: "RATING" },
-        ].map((s) => (
+      {/* ── Stats bar ── */}
+      <View style={[styles.statsBar, { backgroundColor: colors.primary }]}>
+        {STATS.map((s) => (
           <View key={s.label} style={styles.stat}>
             <Text style={[styles.statValue, { color: colors.primaryForeground }]}>{s.value}</Text>
             <Text style={[styles.statLabel, { color: colors.primaryForeground }]}>{s.label}</Text>
@@ -80,7 +90,7 @@ export default function HomeScreen() {
         ))}
       </View>
 
-      {/* Featured */}
+      {/* ── Featured ── */}
       <View style={[styles.section, { backgroundColor: colors.background }]}>
         <GoldDivider />
         <View style={styles.sectionHeader}>
@@ -100,7 +110,7 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Brand story teaser */}
+      {/* ── Brand story teaser ── */}
       <View style={[styles.storyBanner, { backgroundColor: colors.foreground }]}>
         <Text style={[styles.storyTitle, { color: colors.primary }]}>OUR STORY</Text>
         <Text style={[styles.storyText, { color: colors.background }]}>
@@ -112,21 +122,16 @@ export default function HomeScreen() {
         </Text>
       </View>
 
-      {/* Categories */}
+      {/* ── Categories ── */}
       <View style={[styles.section, { backgroundColor: colors.background }]}>
         <Text style={[styles.sectionTitle, { color: colors.foreground }]}>SHOP BY CATEGORY</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.catScroll}>
-          {[
-            { label: "Hoodies", icon: "layers" as const },
-            { label: "T-Shirts", icon: "user" as const },
-            { label: "Jackets", icon: "wind" as const },
-            { label: "Bottoms", icon: "minus" as const },
-            { label: "Accessories", icon: "star" as const },
-          ].map((cat) => (
+          {CATEGORIES.map((cat) => (
             <Pressable
               key={cat.label}
               style={({ pressed }) => [
                 styles.catChip,
+                { ...SHADOW.xs },
                 {
                   backgroundColor: colors.card,
                   borderColor: colors.border,
@@ -137,7 +142,9 @@ export default function HomeScreen() {
                 router.push({ pathname: "/(tabs)/shop", params: { category: cat.label } })
               }
             >
-              <Feather name={cat.icon} size={18} color={colors.primary} />
+              <View style={[styles.catIconBg, { backgroundColor: colors.primary + "18" }]}>
+                <Feather name={cat.icon} size={16} color={colors.primary} />
+              </View>
               <Text style={[styles.catLabel, { color: colors.foreground }]}>{cat.label}</Text>
             </Pressable>
           ))}
@@ -155,7 +162,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   hieroglyphStrip: {
-    color: "rgba(200,157,41,0.2)",
+    color: "rgba(200,157,41,0.18)",
     fontSize: FS.lg,
     letterSpacing: 8,
     textAlign: "center",
@@ -169,9 +176,10 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   heroImage: {
-    width: 150,
-    height: 220,
+    width: 148,
+    height: 218,
     borderWidth: BD.thick,
+    borderRadius: RD.xl,
   },
   heroText: {
     flex: 1,
@@ -180,13 +188,13 @@ const styles = StyleSheet.create({
   heroTag: {
     fontSize: FS.xs,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 2,
+    letterSpacing: LS.widest,
   },
   heroTitle: {
     fontSize: FS.h1,
     fontFamily: "Cinzel_900Black",
     lineHeight: 34,
-    letterSpacing: 1,
+    letterSpacing: LS.wide,
   },
   heroSub: {
     fontSize: FS.md,
@@ -194,21 +202,22 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   heroBtn: {
-    paddingVertical: SP.md - 2,
-    paddingHorizontal: GRID_PAD - SP.xs,
+    paddingVertical: SP.md,
+    paddingHorizontal: GRID_PAD,
     alignItems: "center",
     marginTop: SP.xs,
     minHeight: BTN_H.sm,
     justifyContent: "center",
+    borderRadius: RD.sm,
   },
   heroBtnText: {
     fontSize: FS.xs,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 1.5,
+    letterSpacing: LS.wider,
   },
-  stats: {
+  statsBar: {
     flexDirection: "row",
-    paddingVertical: SP.lg - 2,
+    paddingVertical: SP.lg,
   },
   stat: {
     flex: 1,
@@ -221,7 +230,7 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: FS.micro,
     fontFamily: "Inter_500Medium",
-    letterSpacing: 0.5,
+    letterSpacing: LS.normal,
     opacity: 0.8,
     marginTop: SP.xs - 2,
   },
@@ -237,12 +246,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FS.lg,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 2,
+    letterSpacing: LS.widest,
   },
   seeAll: {
     fontSize: FS.sm,
     fontFamily: "Inter_600SemiBold",
-    letterSpacing: 0.5,
+    letterSpacing: LS.normal,
   },
   grid: {
     flexDirection: "row",
@@ -259,13 +268,13 @@ const styles = StyleSheet.create({
   storyTitle: {
     fontSize: FS.xxl,
     fontFamily: "Cinzel_900Black",
-    letterSpacing: 3,
+    letterSpacing: LS.ultra,
   },
   storyText: {
     fontSize: FS.base,
     fontFamily: "Cinzel_400Regular",
     textAlign: "center",
-    letterSpacing: 0.5,
+    letterSpacing: LS.normal,
   },
   storyBody: {
     fontSize: FS.md,
@@ -282,14 +291,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: SP.sm,
-    paddingHorizontal: GRID_PAD - SP.xs,
+    paddingHorizontal: SP.lg,
     paddingVertical: SP.md,
-    borderWidth: BD.md,
-    marginRight: SP.md - 2,
+    borderWidth: BD.thin,
+    borderRadius: RD.pill,
+    marginRight: SP.sm,
+  },
+  catIconBg: {
+    width: 28,
+    height: 28,
+    borderRadius: RD.circle,
+    alignItems: "center",
+    justifyContent: "center",
   },
   catLabel: {
     fontSize: FS.md,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 0.8,
+    letterSpacing: LS.wide,
   },
 });

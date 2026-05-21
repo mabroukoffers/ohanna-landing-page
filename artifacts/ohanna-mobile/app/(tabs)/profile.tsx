@@ -12,25 +12,25 @@ import {
 } from "react-native";
 
 import { GoldDivider } from "@/components/GoldDivider";
-import { BD, FS, GRID_PAD, RD, SP } from "@/constants/theme";
+import { BD, FS, GRID_PAD, LS, RD, SHADOW, SP } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 const MENU_ITEMS = [
-  { icon: "package" as const, label: "TRACK ORDER", path: "/track" },
-  { icon: "mail" as const, label: "CONTACT US", path: "/contact" },
-  { icon: "info" as const, label: "FAQ", path: "/faq" },
-  { icon: "truck" as const, label: "SHIPPING INFO", path: "/shipping" },
-  { icon: "maximize" as const, label: "SIZE GUIDE", path: "/size-guide" },
-  { icon: "users" as const, label: "COMMUNITY", path: "/community" },
-  { icon: "book-open" as const, label: "OUR STORY", path: "/story" },
-  { icon: "globe" as const, label: "EGYPTIAN CULTURE", path: "/culture" },
-  { icon: "briefcase" as const, label: "CAREERS", path: "/careers" },
+  { icon: "package"   as const, label: "TRACK ORDER",      path: "/track" },
+  { icon: "mail"      as const, label: "CONTACT US",       path: "/contact" },
+  { icon: "info"      as const, label: "FAQ",              path: "/faq" },
+  { icon: "truck"     as const, label: "SHIPPING INFO",    path: "/shipping" },
+  { icon: "maximize"  as const, label: "SIZE GUIDE",       path: "/size-guide" },
+  { icon: "users"     as const, label: "COMMUNITY",        path: "/community" },
+  { icon: "book-open" as const, label: "OUR STORY",        path: "/story" },
+  { icon: "globe"     as const, label: "EGYPTIAN CULTURE", path: "/culture" },
+  { icon: "briefcase" as const, label: "CAREERS",          path: "/careers" },
 ];
 
 const BRAND_STORY = [
-  { glyph: "𓂀", title: "ANCIENT ROOTS", text: "Born from the cradle of civilization, wearing 5,000 years of history." },
-  { glyph: "𓋹", title: "MODERN STREETS", text: "Egyptian symbolism reinterpreted for contemporary urban fashion." },
-  { glyph: "𓇯", title: "SACRED CRAFT", text: "Every piece is a wearable artifact. Premium quality, limitless heritage." },
+  { glyph: "𓂀", title: "ANCIENT ROOTS",   text: "Born from the cradle of civilization, wearing 5,000 years of history." },
+  { glyph: "𓋹", title: "MODERN STREETS",  text: "Egyptian symbolism reinterpreted for contemporary urban fashion." },
+  { glyph: "𓇯", title: "SACRED CRAFT",    text: "Every piece is a wearable artifact. Premium quality, limitless heritage." },
 ];
 
 export default function ProfileScreen() {
@@ -50,23 +50,31 @@ export default function ProfileScreen() {
           { paddingTop: topPad + SP.md, backgroundColor: colors.foreground },
         ]}
       >
-        <Text style={[styles.glyphRow, { color: colors.primary }]}>𓂀 𓋹 𓇯</Text>
+        <View style={[styles.glyphCircle, { borderColor: "rgba(200,157,41,0.35)" }]}>
+          <Text style={[styles.glyphRow, { color: colors.primary }]}>𓂀</Text>
+        </View>
         <Text style={[styles.brandName, { color: colors.background }]}>OHANNA</Text>
         <Text style={[styles.brandTagline, { color: colors.primary }]}>EGYPTIAN STREETWEAR</Text>
-        <Text style={[styles.brandSub, { color: "rgba(253,248,239,0.5)" }]}>Maadi, Cairo, Egypt</Text>
+        <Text style={[styles.brandSub, { color: "rgba(253,248,239,0.45)" }]}>Maadi, Cairo, Egypt</Text>
       </View>
 
-      {/* Quick actions */}
+      {/* Quick links */}
       <View style={[styles.section, { backgroundColor: colors.background }]}>
         <Text style={[styles.sectionTitle, { color: colors.foreground }]}>QUICK LINKS</Text>
-        <View style={[styles.menuCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View
+          style={[
+            styles.menuCard,
+            { ...SHADOW.sm },
+            { backgroundColor: colors.card, borderColor: colors.border },
+          ]}
+        >
           {MENU_ITEMS.map((item, i) => (
             <React.Fragment key={item.label}>
               <Pressable
                 style={({ pressed }) => [styles.menuItem, { opacity: pressed ? 0.7 : 1 }]}
                 onPress={() => router.push(item.path as any)}
               >
-                <View style={[styles.menuIconWrapper, { backgroundColor: colors.secondary }]}>
+                <View style={[styles.menuIconWrapper, { backgroundColor: colors.primary + "18" }]}>
                   <Feather name={item.icon} size={16} color={colors.primary} />
                 </View>
                 <Text style={[styles.menuLabel, { color: colors.foreground }]}>{item.label}</Text>
@@ -80,7 +88,7 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      {/* Brand story */}
+      {/* Brand story cards */}
       <View style={[styles.section, { backgroundColor: colors.background }]}>
         <GoldDivider />
         <Text style={[styles.sectionTitle, { color: colors.foreground }]}>OUR STORY</Text>
@@ -88,7 +96,11 @@ export default function ProfileScreen() {
           {BRAND_STORY.map((s) => (
             <View
               key={s.title}
-              style={[styles.storyCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+              style={[
+                styles.storyCard,
+                { ...SHADOW.xs },
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}
             >
               <Text style={[styles.storyGlyph, { color: colors.primary }]}>{s.glyph}</Text>
               <Text style={[styles.storyTitle, { color: colors.foreground }]}>{s.title}</Text>
@@ -104,11 +116,13 @@ export default function ProfileScreen() {
         <Text style={[styles.contactTitle, { color: colors.primary }]}>GET IN TOUCH</Text>
         {[
           { icon: "map-pin" as const, text: "Maadi, Cairo, Egypt" },
-          { icon: "mail" as const, text: "info@ohanna.store" },
-          { icon: "clock" as const, text: "Sun–Thu 10am–8pm EET" },
+          { icon: "mail"    as const, text: "info@ohanna.store" },
+          { icon: "clock"   as const, text: "Sun–Thu 10am–8pm EET" },
         ].map((c) => (
           <View key={c.text} style={styles.contactRow}>
-            <Feather name={c.icon} size={14} color={colors.primary} />
+            <View style={[styles.contactIconBg, { backgroundColor: "rgba(200,157,41,0.12)" }]}>
+              <Feather name={c.icon} size={13} color={colors.primary} />
+            </View>
             <Text style={[styles.contactText, { color: colors.secondary }]}>{c.text}</Text>
           </View>
         ))}
@@ -126,14 +140,21 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   header: {
     paddingHorizontal: GRID_PAD,
-    paddingBottom: SP.xxxl - SP.xs,
+    paddingBottom: SP.xxxl,
     alignItems: "center",
     gap: SP.xs + 2,
   },
-  glyphRow: {
-    fontSize: FS.xxxl,
-    letterSpacing: 8,
+  glyphCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: RD.circle,
+    borderWidth: BD.thick,
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: SP.xs,
+  },
+  glyphRow: {
+    fontSize: FS.h2,
   },
   brandName: {
     fontSize: FS.hero,
@@ -143,7 +164,7 @@ const styles = StyleSheet.create({
   brandTagline: {
     fontSize: FS.xs,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 3,
+    letterSpacing: LS.ultra,
   },
   brandSub: {
     fontSize: FS.sm,
@@ -151,15 +172,16 @@ const styles = StyleSheet.create({
   },
   section: {
     padding: GRID_PAD,
-    gap: SP.lg - 2,
+    gap: SP.md,
   },
   sectionTitle: {
     fontSize: FS.base,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 2,
+    letterSpacing: LS.widest,
   },
   menuCard: {
-    borderWidth: BD.md,
+    borderWidth: BD.thin,
+    borderRadius: RD.md,
     overflow: "hidden",
   },
   menuItem: {
@@ -167,11 +189,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: SP.md,
     paddingHorizontal: GRID_PAD,
-    paddingVertical: SP.lg - 2,
+    paddingVertical: SP.md + 2,
   },
   menuIconWrapper: {
-    width: 32,
-    height: 32,
+    width: 34,
+    height: 34,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: RD.sm,
@@ -180,25 +202,26 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: FS.sm,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 1.2,
+    letterSpacing: LS.wider,
   },
   divider: {
     height: 1,
     marginHorizontal: GRID_PAD,
   },
   storyCards: {
-    gap: SP.md - 2,
+    gap: SP.sm,
   },
   storyCard: {
     padding: GRID_PAD,
-    borderWidth: BD.md,
+    borderWidth: BD.thin,
+    borderRadius: RD.md,
     gap: SP.xs + 2,
   },
   storyGlyph: { fontSize: FS.xxxl },
   storyTitle: {
     fontSize: FS.md,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 1.5,
+    letterSpacing: LS.wider,
   },
   storyText: {
     fontSize: FS.base,
@@ -213,12 +236,19 @@ const styles = StyleSheet.create({
   contactTitle: {
     fontSize: FS.lg,
     fontFamily: "Cinzel_700Bold",
-    letterSpacing: 3,
+    letterSpacing: LS.ultra,
   },
   contactRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: SP.md - 2,
+    gap: SP.sm,
+  },
+  contactIconBg: {
+    width: 28,
+    height: 28,
+    borderRadius: RD.circle,
+    alignItems: "center",
+    justifyContent: "center",
   },
   contactText: {
     fontSize: FS.base,
@@ -227,7 +257,7 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: FS.xs,
     fontFamily: "Inter_400Regular",
-    letterSpacing: 0.5,
+    letterSpacing: LS.normal,
     textAlign: "center",
   },
 });

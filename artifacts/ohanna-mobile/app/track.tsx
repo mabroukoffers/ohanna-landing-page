@@ -15,20 +15,20 @@ import {
 
 import { GoldDivider } from "@/components/GoldDivider";
 import { getApiBase } from "@/constants/products";
-import { BD, BTN_H, FS, GRID_PAD, RD, SP } from "@/constants/theme";
+import { BD, BTN_H, FS, GRID_PAD, LS, RD, SHADOW, SP } from "@/constants/theme";
 import { useColors } from "@/hooks/useColors";
 
 type OrderStatus = "pending" | "paid" | "shipped" | "delivered" | "confirmed";
 
-const STATUS_LABELS: Record<
+const STATUS_META: Record<
   OrderStatus | string,
-  { label: string; icon: "clock" | "check-circle" | "truck" | "package" }
+  { label: string; icon: "clock" | "check-circle" | "truck" | "package"; color: string }
 > = {
-  pending:   { label: "PENDING",   icon: "clock" },
-  confirmed: { label: "CONFIRMED", icon: "check-circle" },
-  paid:      { label: "PAID",      icon: "check-circle" },
-  shipped:   { label: "SHIPPED",   icon: "truck" },
-  delivered: { label: "DELIVERED", icon: "package" },
+  pending:   { label: "PENDING",   icon: "clock",         color: "#C89D29" },
+  confirmed: { label: "CONFIRMED", icon: "check-circle",  color: "#2E7D32" },
+  paid:      { label: "PAID",      icon: "check-circle",  color: "#2E7D32" },
+  shipped:   { label: "SHIPPED",   icon: "truck",         color: "#1D4D4F" },
+  delivered: { label: "DELIVERED", icon: "package",       color: "#1D4D4F" },
 };
 
 export default function TrackScreen() {
@@ -62,7 +62,9 @@ export default function TrackScreen() {
     }
   };
 
-  const statusInfo = order ? (STATUS_LABELS[order.status] ?? STATUS_LABELS.pending) : null;
+  const statusMeta = order
+    ? (STATUS_META[order.status] ?? STATUS_META.pending)
+    : null;
 
   return (
     <KeyboardAwareScrollViewCompat
@@ -71,7 +73,6 @@ export default function TrackScreen() {
       bottomOffset={16}
       keyboardShouldPersistTaps="handled"
     >
-      {/* Dark hero header */}
       <View
         style={[
           styles.header,
@@ -92,45 +93,42 @@ export default function TrackScreen() {
         <GoldDivider />
         <Text style={[styles.formTitle, { color: colors.foreground }]}>FIND YOUR ORDER</Text>
 
-        <TextInput
-          value={orderId}
-          onChangeText={setOrderId}
-          placeholder="Order ID (e.g. OHN-1234567)"
-          placeholderTextColor={colors.mutedForeground}
-          style={[
-            styles.input,
-            {
-              color: colors.foreground,
-              borderColor: colors.border,
-              backgroundColor: colors.card,
-              fontFamily: "Inter_400Regular",
-            },
-          ]}
-          autoCapitalize="characters"
-        />
-        <TextInput
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Email address"
-          placeholderTextColor={colors.mutedForeground}
-          style={[
-            styles.input,
-            {
-              color: colors.foreground,
-              borderColor: colors.border,
-              backgroundColor: colors.card,
-              fontFamily: "Inter_400Regular",
-            },
-          ]}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
+        <View style={styles.fieldGroup}>
+          <Text style={[styles.fieldLabel, { color: colors.mutedForeground }]}>ORDER ID</Text>
+          <TextInput
+            value={orderId}
+            onChangeText={setOrderId}
+            placeholder="e.g. OHN-1234567"
+            placeholderTextColor={colors.mutedForeground}
+            style={[
+              styles.input,
+              { color: colors.foreground, borderColor: colors.border, backgroundColor: colors.card, fontFamily: "Inter_400Regular" },
+            ]}
+            autoCapitalize="characters"
+          />
+        </View>
+
+        <View style={styles.fieldGroup}>
+          <Text style={[styles.fieldLabel, { color: colors.mutedForeground }]}>EMAIL ADDRESS</Text>
+          <TextInput
+            value={email}
+            onChangeText={setEmail}
+            placeholder="your@email.com"
+            placeholderTextColor={colors.mutedForeground}
+            style={[
+              styles.input,
+              { color: colors.foreground, borderColor: colors.border, backgroundColor: colors.card, fontFamily: "Inter_400Regular" },
+            ]}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
+        </View>
 
         {error ? (
           <View
             style={[
               styles.errorBox,
-              { backgroundColor: "rgba(174,28,28,0.1)", borderColor: colors.destructive },
+              { backgroundColor: "rgba(174,28,28,0.08)", borderColor: colors.destructive + "60" },
             ]}
           >
             <Feather name="alert-circle" size={14} color={colors.destructive} />
@@ -141,6 +139,7 @@ export default function TrackScreen() {
         <Pressable
           style={({ pressed }) => [
             styles.trackBtn,
+            { ...SHADOW.sm },
             { backgroundColor: colors.foreground, opacity: pressed || loading ? 0.85 : 1 },
           ]}
           onPress={handleTrack}
@@ -157,7 +156,13 @@ export default function TrackScreen() {
         </Pressable>
 
         {order && (
-          <View style={[styles.orderCard, { backgroundColor: colors.card, borderColor: colors.primary }]}>
+          <View
+            style={[
+              styles.orderCard,
+              { ...SHADOW.md },
+              { backgroundColor: colors.card, borderColor: colors.primary + "50" },
+            ]}
+          >
             <GoldDivider />
             <View style={styles.orderHeader}>
               <View>
@@ -166,11 +171,16 @@ export default function TrackScreen() {
                   {order.created_at ? new Date(order.created_at).toLocaleDateString() : ""}
                 </Text>
               </View>
-              {statusInfo && (
-                <View style={[styles.statusBadge, { backgroundColor: colors.accent }]}>
-                  <Feather name={statusInfo.icon} size={12} color={colors.accentForeground} />
-                  <Text style={[styles.statusText, { color: colors.accentForeground }]}>
-                    {statusInfo.label}
+              {statusMeta && (
+                <View
+                  style={[
+                    styles.statusBadge,
+                    { backgroundColor: statusMeta.color + "20", borderColor: statusMeta.color + "60" },
+                  ]}
+                >
+                  <Feather name={statusMeta.icon} size={12} color={statusMeta.color} />
+                  <Text style={[styles.statusText, { color: statusMeta.color }]}>
+                    {statusMeta.label}
                   </Text>
                 </View>
               )}
@@ -202,14 +212,25 @@ export default function TrackScreen() {
 
 const styles = StyleSheet.create({
   header: { padding: GRID_PAD, paddingBottom: SP.xxl, gap: SP.xs },
-  backBtn: { marginBottom: SP.sm, width: 40 },
-  headerTitle: { fontSize: FS.h3, fontFamily: "Cinzel_900Black", letterSpacing: 2 },
-  headerSub: { fontSize: FS.xs, fontFamily: "Cinzel_700Bold", letterSpacing: 3 },
-  content: { padding: GRID_PAD, gap: SP.lg - 2, flex: 1 },
-  formTitle: { fontSize: FS.base, fontFamily: "Cinzel_700Bold", letterSpacing: 2 },
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: RD.circle,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: SP.sm,
+  },
+  headerTitle: { fontSize: FS.h3, fontFamily: "Cinzel_900Black", letterSpacing: LS.widest },
+  headerSub: { fontSize: FS.xs, fontFamily: "Cinzel_700Bold", letterSpacing: LS.ultra },
+  content: { padding: GRID_PAD, gap: SP.md, flex: 1 },
+  formTitle: { fontSize: FS.base, fontFamily: "Cinzel_700Bold", letterSpacing: LS.widest },
+  fieldGroup: { gap: SP.xs + 2 },
+  fieldLabel: { fontSize: FS.xxs, fontFamily: "Cinzel_700Bold", letterSpacing: LS.wider },
   input: {
-    borderWidth: BD.md,
-    paddingHorizontal: SP.lg - 2,
+    borderWidth: BD.thin,
+    borderRadius: RD.sm,
+    paddingHorizontal: SP.md,
     paddingVertical: SP.md + 1,
     fontSize: FS.lg,
   },
@@ -219,30 +240,39 @@ const styles = StyleSheet.create({
     gap: SP.sm,
     padding: SP.md,
     borderWidth: BD.thin,
+    borderRadius: RD.sm,
   },
   errorText: { fontSize: FS.base, fontFamily: "Inter_400Regular", flex: 1 },
   trackBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: SP.md - 2,
+    gap: SP.md,
     paddingVertical: SP.lg,
     minHeight: BTN_H.lg,
+    borderRadius: RD.sm,
   },
-  trackBtnText: { fontSize: FS.sm, fontFamily: "Cinzel_700Bold", letterSpacing: 2 },
-  orderCard: { borderWidth: BD.md, padding: GRID_PAD, gap: SP.md, marginTop: SP.sm },
+  trackBtnText: { fontSize: FS.sm, fontFamily: "Cinzel_700Bold", letterSpacing: LS.widest },
+  orderCard: {
+    borderWidth: BD.thin,
+    borderRadius: RD.md,
+    padding: GRID_PAD,
+    gap: SP.md,
+    marginTop: SP.sm,
+  },
   orderHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
-  orderId: { fontSize: FS.lg, fontFamily: "Cinzel_700Bold", letterSpacing: 1 },
+  orderId: { fontSize: FS.lg, fontFamily: "Cinzel_700Bold", letterSpacing: LS.wide },
   orderDate: { fontSize: FS.sm, fontFamily: "Inter_400Regular", marginTop: SP.xs - 2 },
   statusBadge: {
     flexDirection: "row",
     alignItems: "center",
     gap: SP.xs,
-    paddingHorizontal: SP.md - 2,
+    paddingHorizontal: SP.md,
     paddingVertical: SP.xs + 1,
-    borderRadius: RD.badge,
+    borderRadius: RD.pill,
+    borderWidth: BD.thin,
   },
-  statusText: { fontSize: FS.xxs, fontFamily: "Inter_700Bold", letterSpacing: 1 },
+  statusText: { fontSize: FS.xxs, fontFamily: "Inter_700Bold", letterSpacing: LS.wide },
   orderItems: { gap: SP.xs },
   orderItem: { fontSize: FS.base, fontFamily: "Inter_400Regular", lineHeight: 20 },
   orderTotal: { fontSize: FS.lg, fontFamily: "Inter_700Bold" },
