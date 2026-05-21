@@ -6,6 +6,7 @@
 import { db, contactsTable } from "../index";
 import { eq, desc } from "drizzle-orm";
 import type { InsertContact, Contact } from "../schema";
+import { randomUUID } from "crypto";
 
 export const contactQueries = {
   /**
@@ -38,7 +39,10 @@ export const contactQueries = {
    * Create contact
    */
   async create(data: InsertContact): Promise<Contact> {
-    const result = await db.insert(contactsTable).values(data).returning();
+    const result = await db.insert(contactsTable).values({
+      id: randomUUID(),
+      ...data,
+    }).returning();
     return result[0];
   },
 
@@ -47,7 +51,7 @@ export const contactQueries = {
    */
   async delete(id: string): Promise<boolean> {
     const result = await db.delete(contactsTable).where(eq(contactsTable.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   },
 
   /**

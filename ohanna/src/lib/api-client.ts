@@ -3,64 +3,22 @@
  * Centralized API communication for the frontend
  */
 
-import { customFetch, setBaseUrl } from "@/api/custom-fetch";
+import { customFetch, setBaseUrl } from "@/api";
+import type {
+  Product,
+  ProductsResponse,
+  CheckoutRequest,
+  CheckoutResponse,
+  ContactRequest,
+  ContactResponse,
+  TrackOrderRequest,
+  TrackOrderResponse,
+  HealthResponse,
+} from "@/types";
 
 // Set the base URL for API calls
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 setBaseUrl(API_BASE_URL);
-
-export interface CheckoutRequest {
-  items: Array<{
-    product: {
-      id: string;
-      name: string;
-      price: number;
-      description?: string;
-    };
-    quantity: number;
-  }>;
-  successUrl: string;
-  cancelUrl: string;
-}
-
-export interface CheckoutResponse {
-  url: string;
-  sessionId: string;
-}
-
-export interface ContactRequest {
-  name: string;
-  email: string;
-  subject?: string;
-  message: string;
-}
-
-export interface ContactResponse {
-  success: boolean;
-  message: string;
-}
-
-export interface TrackOrderRequest {
-  id: string;
-  email: string;
-}
-
-export interface Order {
-  id: string;
-  items: any[];
-  total: number;
-  status: string;
-  created_at: string;
-}
-
-export interface TrackOrderResponse {
-  order: Order;
-}
-
-export interface HealthResponse {
-  status: string;
-  message?: string;
-}
 
 /**
  * API Client
@@ -79,6 +37,50 @@ export const apiClient = {
   },
 
   /**
+   * Products endpoints
+   */
+  products: {
+    list: async (): Promise<Product[]> => {
+      try {
+        const response = await customFetch("/api/products") as ProductsResponse;
+        return response.products || [];
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+        return [];
+      }
+    },
+
+    getById: async (id: string): Promise<Product | null> => {
+      try {
+        return await customFetch(`/api/products/${id}`) as Product;
+      } catch (err) {
+        console.error(`Failed to fetch product ${id}:`, err);
+        return null;
+      }
+    },
+
+    search: async (query: string): Promise<Product[]> => {
+      try {
+        const response = await customFetch(`/api/products/search/${encodeURIComponent(query)}`) as ProductsResponse;
+        return response.products || [];
+      } catch (err) {
+        console.error("Failed to search products:", err);
+        return [];
+      }
+    },
+
+    getByCategory: async (category: string): Promise<Product[]> => {
+      try {
+        const response = await customFetch(`/api/products/category/${encodeURIComponent(category)}`) as ProductsResponse;
+        return response.products || [];
+      } catch (err) {
+        console.error(`Failed to fetch products for category ${category}:`, err);
+        return [];
+      }
+    },
+  },
+
+  /**
    * Checkout endpoints
    */
   checkout: {
@@ -87,7 +89,7 @@ export const apiClient = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      });
+      }) as Promise<CheckoutResponse>;
     },
   },
 
@@ -100,7 +102,7 @@ export const apiClient = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      });
+      }) as Promise<ContactResponse>;
     },
   },
 
@@ -113,16 +115,7 @@ export const apiClient = {
         id: params.id,
         email: params.email,
       });
-      return customFetch(`/api/track-order?${searchParams}`);
-    },
-  },
-
-  /**
-   * Products endpoints
-   */
-  products: {
-    list: async (): Promise<{ products: any[] }> => {
-      return customFetch("/api/products");
+      return customFetch(`/api/track-order?${searchParams}`) as Promise<TrackOrderResponse>;
     },
   },
 
@@ -131,7 +124,7 @@ export const apiClient = {
    */
   setup: {
     status: async (): Promise<{ status: string; message: string }> => {
-      return customFetch("/api/setup");
+      return customFetch("/api/setup") as Promise<{ status: string; message: string }>;
     },
   },
 };

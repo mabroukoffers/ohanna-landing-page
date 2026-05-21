@@ -1,14 +1,18 @@
-import type { Product } from "./types";
+import type { Product } from "@/types";
 
-export const PRODUCTS: Product[] = [
+/**
+ * Fallback product data - used when API is unavailable
+ * This matches the backend seed data exactly
+ */
+export const FALLBACK_PRODUCTS: Product[] = [
   {
     id: "1",
     name: "HORUS HOODIE",
     description: "Oversized hoodie with the Eye of Horus embroidered across the chest. Premium 400gsm cotton blend. Ancient power meets street comfort.",
-    price: 3499,
+    price: 349900,
     category: "Hoodies",
     badge: "BESTSELLER",
-    image_url: "/streetwear-egyptian-sketch.png",
+    imageUrl: "/streetwear-egyptian-sketch.png",
     stock: 50,
     slug: "horus-hoodie",
   },
@@ -16,10 +20,10 @@ export const PRODUCTS: Product[] = [
     id: "2",
     name: "ANKH TEE",
     description: "Relaxed fit tee with oversized Ankh symbol. Heavyweight 220gsm cotton. The symbol of eternal life on your chest.",
-    price: 1299,
+    price: 129900,
     category: "T-Shirts",
     badge: "LIMITED",
-    image_url: "/abstract-geometric-shapes.png",
+    imageUrl: "/abstract-geometric-shapes.png",
     stock: 30,
     slug: "ankh-tee",
   },
@@ -27,10 +31,10 @@ export const PRODUCTS: Product[] = [
     id: "3",
     name: "PHARAOH JACKET",
     description: "Bomber jacket with scarab beetle and pyramid patterns. Premium polyester with Egyptian motifs. Rule the streets like a pharaoh.",
-    price: 5499,
+    price: 549900,
     category: "Jackets",
     badge: "NEW",
-    image_url: "/egyptian-streetwear-timeline.png",
+    imageUrl: "/egyptian-streetwear-timeline.png",
     stock: 20,
     slug: "pharaoh-jacket",
   },
@@ -38,116 +42,136 @@ export const PRODUCTS: Product[] = [
     id: "4",
     name: "NILE JOGGERS",
     description: "Streetwear joggers with Egyptian wave patterns along the sides. 300gsm fleece. Comfort from the banks of the Nile.",
-    price: 2199,
+    price: 219900,
     category: "Bottoms",
     badge: "TRENDING",
-    image_url: "/streetwear-egyptian-sketch.png",
+    imageUrl: "/streetwear-egyptian-sketch.png",
     stock: 45,
     slug: "nile-joggers",
   },
   {
     id: "5",
     name: "CLEOPATRA CAP",
-    description: "Snapback cap with golden Egyptian crown embroidery. One size fits all. Channel the power of the most iconic ruler.",
-    price: 899,
+    description: "Structured 6-panel cap with embroidered Cleopatra profile. Premium cotton twill. Royalty on your head.",
+    price: 79900,
     category: "Accessories",
     badge: "EXCLUSIVE",
-    image_url: "/abstract-geometric-shapes.png",
-    stock: 60,
+    imageUrl: "/placeholder-logo.png",
+    stock: 100,
     slug: "cleopatra-cap",
   },
   {
     id: "6",
-    name: "OSIRIS BACKPACK",
-    description: "Urban backpack with Egyptian god motifs and hieroglyphic straps. 25L capacity. Built for the modern pharaoh on the move.",
-    price: 2999,
-    category: "Accessories",
+    name: "SPHINX SWEATPANTS",
+    description: "Tapered sweatpants with Sphinx embroidery on the thigh. 280gsm French terry. Comfort meets mythology.",
+    price: 189900,
+    category: "Bottoms",
     badge: "UTILITY",
-    image_url: "/egyptian-streetwear-timeline.png",
-    stock: 25,
-    slug: "osiris-backpack",
+    imageUrl: "/streetwear-egyptian-sketch.png",
+    stock: 35,
+    slug: "sphinx-sweatpants",
   },
   {
     id: "7",
-    name: "RA SWEATER",
-    description: "Crew neck sweater with Ra sun disc on the back. 350gsm cotton blend. Carry the power of the sun god.",
-    price: 2799,
-    category: "Hoodies",
+    name: "PYRAMID OVERSIZED TEE",
+    description: "Ultra-oversized tee with geometric pyramid print. 200gsm heavyweight cotton. Architectural streetwear.",
+    price: 149900,
+    category: "T-Shirts",
     badge: "NEW",
-    image_url: "/streetwear-egyptian-sketch.png",
-    stock: 35,
-    slug: "ra-sweater",
+    imageUrl: "/abstract-geometric-shapes.png",
+    stock: 60,
+    slug: "pyramid-oversized-tee",
   },
   {
     id: "8",
-    name: "SPHINX TEE",
-    description: "Graphic tee with the Sphinx illustration in minimal line art. Lightweight 180gsm. A guardian of ancient mysteries.",
-    price: 1499,
+    name: "CARTOUCHE LONG SLEEVE",
+    description: "Long sleeve tee with cartouche design wrapping around the sleeve. 220gsm cotton. Ancient script, modern style.",
+    price: 169900,
     category: "T-Shirts",
-    badge: "TRENDING",
-    image_url: "/abstract-geometric-shapes.png",
+    badge: "BESTSELLER",
+    imageUrl: "/placeholder.jpg",
     stock: 55,
-    slug: "sphinx-tee",
+    slug: "cartouche-long-sleeve",
   },
   {
     id: "9",
-    name: "HIEROGLYPH BOMBER",
-    description: "Premium bomber jacket with allover hieroglyph print. Satin finish with quilted lining. A wearable tablet of ancient history.",
-    price: 4999,
+    name: "SCARAB BOMBER",
+    description: "Lightweight bomber with scarab beetle embroidery. Nylon shell with cotton lining. Insect-inspired streetwear.",
+    price: 399900,
     category: "Jackets",
-    badge: "EXCLUSIVE",
-    image_url: "/egyptian-streetwear-timeline.png",
-    stock: 15,
-    slug: "hieroglyph-bomber",
+    badge: "LIMITED",
+    imageUrl: "/egyptian-streetwear-timeline.png",
+    stock: 25,
+    slug: "scarab-bomber",
   },
   {
     id: "10",
-    name: "SACRED SHORTS",
-    description: "Cargo shorts with ankh embroidery on the pocket. Lightweight ripstop fabric. Sacred comfort for warm days.",
-    price: 1799,
-    category: "Bottoms",
-    badge: "BESTSELLER",
-    image_url: "/streetwear-egyptian-sketch.png",
+    name: "HIEROGLYPH HOODIE",
+    description: "Pullover hoodie with all-over hieroglyph print. 350gsm cotton blend. Wear ancient language.",
+    price: 329900,
+    category: "Hoodies",
+    badge: "TRENDING",
+    imageUrl: "/streetwear-egyptian-sketch.png",
     stock: 40,
-    slug: "sacred-shorts",
+    slug: "hieroglyph-hoodie",
   },
   {
     id: "11",
-    name: "NEFERTITI HOODIE",
-    description: "Slim cut hoodie with Nefertiti silhouette screen print. 380gsm French terry. Pay tribute to the most beautiful queen.",
-    price: 3299,
-    category: "Hoodies",
-    badge: "LIMITED",
-    image_url: "/abstract-geometric-shapes.png",
-    stock: 18,
-    slug: "nefertiti-hoodie",
+    name: "NEFERTITI CROP TOP",
+    description: "Fitted crop top with Nefertiti profile. 180gsm cotton. Celebrate the queen of beauty.",
+    price: 99900,
+    category: "T-Shirts",
+    badge: "EXCLUSIVE",
+    imageUrl: "/placeholder.jpg",
+    stock: 50,
+    slug: "nefertiti-crop-top",
   },
   {
     id: "12",
-    name: "PYRAMID TRACK PANTS",
-    description: "Track pants with pyramid geometric pattern along the legs. Moisture-wicking fabric. Ancient geometry in motion.",
-    price: 2499,
-    category: "Bottoms",
+    name: "ANKH CHAIN NECKLACE",
+    description: "Stainless steel Ankh pendant on chain. Adjustable length. Timeless symbol of life.",
+    price: 49900,
+    category: "Accessories",
     badge: "NEW",
-    image_url: "/egyptian-streetwear-timeline.png",
-    stock: 32,
-    slug: "pyramid-track-pants",
+    imageUrl: "/placeholder-logo.png",
+    stock: 200,
+    slug: "ankh-chain-necklace",
   },
 ];
 
+// Keep PRODUCTS for backward compatibility - will be populated from API
+export let PRODUCTS: Product[] = FALLBACK_PRODUCTS;
+
 export const CATEGORIES = ["All", "Hoodies", "T-Shirts", "Jackets", "Bottoms", "Accessories"];
 
+/**
+ * Format price in EGP (price is stored in cents)
+ */
 export function fmt(price: number): string {
-  return `EGP ${price.toLocaleString("en-EG")}`;
+  const egp = price / 100;
+  return `EGP ${egp.toLocaleString("en-EG")}`;
 }
 
+/**
+ * Get products by category
+ */
 export function getProductsByCategory(category: string): Product[] {
   if (category === "All") return PRODUCTS;
   return PRODUCTS.filter((p) => p.category === category);
 }
 
+/**
+ * Get product by ID or slug
+ */
 export function getProductById(id: string): Product | undefined {
   return PRODUCTS.find((p) => p.id === id || p.slug === id);
+}
+
+/**
+ * Update products from API
+ */
+export function setProducts(products: Product[]): void {
+  PRODUCTS = products;
 }
 
 export const BADGE_STYLES: Record<string, string> = {

@@ -6,6 +6,7 @@
 import { db, productsTable } from "../index";
 import { eq, like, desc } from "drizzle-orm";
 import type { InsertProduct, Product } from "../schema";
+import { randomUUID } from "crypto";
 
 export const productQueries = {
   /**
@@ -57,7 +58,10 @@ export const productQueries = {
    * Create product
    */
   async create(data: InsertProduct): Promise<Product> {
-    const result = await db.insert(productsTable).values(data).returning();
+    const result = await db.insert(productsTable).values({
+      id: randomUUID(),
+      ...data,
+    }).returning();
     return result[0];
   },
 
@@ -78,7 +82,7 @@ export const productQueries = {
    */
   async delete(id: string): Promise<boolean> {
     const result = await db.delete(productsTable).where(eq(productsTable.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   },
 
   /**

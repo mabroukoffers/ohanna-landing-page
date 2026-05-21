@@ -20,10 +20,16 @@ export const productsTable = pgTable("products", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const insertProductSchema = createInsertSchema(productsTable).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
+// Create insert schema and omit auto-generated fields
+export const insertProductSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string().min(1, "Description is required"),
+  price: z.number().int().positive("Price must be positive"),
+  category: z.string().min(1, "Category is required"),
+  badge: z.string().optional().nullable(),
+  imageUrl: z.string().url("Invalid image URL"),
+  stock: z.number().int().nonnegative("Stock cannot be negative").optional(),
+  slug: z.string().optional().nullable(),
 });
 
 export type InsertProduct = z.infer<typeof insertProductSchema>;

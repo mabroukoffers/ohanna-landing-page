@@ -5,8 +5,9 @@ import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import ProductCard from "@/components/product/product-card";
 import { ProductGridSkeleton } from "@/components/product/product-skeleton";
-import { PRODUCTS, CATEGORIES, getProductsByCategory } from "@/lib/products-data";
-import type { Product } from "@/lib/types";
+import { CATEGORIES, getProductsByCategory, setProducts } from "@/lib/products-data";
+import { apiClient } from "@/lib/api-client";
+import type { Product } from "@/types";
 
 const PAGE_SIZE = 6;
 
@@ -29,6 +30,26 @@ export default function CollectionPage() {
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [products, setLocalProducts] = useState<Product[]>([]);
+
+  // Fetch products from API on mount
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const data = await apiClient.products.list();
+        setLocalProducts(data);
+        setProducts(data);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+        // Fallback to local data is handled by products-data.ts
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const debouncedSearch = useDebounce(searchInput, 300);
 

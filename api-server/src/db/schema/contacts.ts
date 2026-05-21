@@ -15,9 +15,12 @@ export const contactsTable = pgTable("contacts", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const insertContactSchema = createInsertSchema(contactsTable).omit({
-  id: true,
-  createdAt: true,
+// Create insert schema and omit auto-generated fields
+export const insertContactSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email"),
+  subject: z.string().optional().nullable(),
+  message: z.string().min(1, "Message is required"),
 });
 
 export type InsertContact = z.infer<typeof insertContactSchema>;

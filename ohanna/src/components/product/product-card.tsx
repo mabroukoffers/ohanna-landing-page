@@ -40,7 +40,7 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
       <Link href={`/product/${product.slug ?? product.id}`} className="block relative overflow-hidden">
         <div className="aspect-[4/5] relative" style={{ background: bgColor }}>
           <img
-            src={imgError ? "/placeholder.jpg" : product.image_url}
+            src={imgError ? "/placeholder.jpg" : product.imageUrl}
             alt={`${product.name} — OHANNA Egyptian Streetwear`}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             onError={() => setImgError(true)}

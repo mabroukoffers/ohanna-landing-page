@@ -6,6 +6,7 @@
 import { db, ordersTable } from "../index";
 import { eq, desc } from "drizzle-orm";
 import type { InsertOrder, Order } from "../schema";
+import { randomUUID } from "crypto";
 
 export const orderQueries = {
   /**
@@ -49,7 +50,16 @@ export const orderQueries = {
    * Create order
    */
   async create(data: InsertOrder): Promise<Order> {
-    const result = await db.insert(ordersTable).values(data).returning();
+    const result = await db.insert(ordersTable).values({
+      id: randomUUID(),
+      shippingAddress: data.shippingAddress,
+      items: data.items,
+      customerEmail: data.customerEmail,
+      customerName: data.customerName,
+      total: data.total,
+      status: data.status || "pending",
+      stripeSessionId: data.stripeSessionId || null,
+    }).returning();
     return result[0];
   },
 
@@ -82,7 +92,7 @@ export const orderQueries = {
    */
   async delete(id: string): Promise<boolean> {
     const result = await db.delete(ordersTable).where(eq(ordersTable.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   },
 
   /**

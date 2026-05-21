@@ -11,6 +11,14 @@ const inMemoryContacts: any[] = [];
 const inMemoryOrders: any[] = [];
 
 /**
+ * Helper to ensure string value (handle Express params that can be string or string[])
+ */
+function ensureString(value: string | string[] | undefined): string | undefined {
+  if (Array.isArray(value)) return value[0];
+  return value;
+}
+
+/**
  * Products endpoints
  */
 router.get(
@@ -30,10 +38,16 @@ router.get(
   "/products/:id",
   asyncHandler(async (req: Request, res: Response) => {
     try {
+      const id = ensureString(req.params.id);
+      if (!id) {
+        res.status(400).json({ error: "Product ID is required" });
+        return;
+      }
+
       // Try to get by ID first, then by slug
-      let product = await productQueries.getById(req.params.id);
+      let product = await productQueries.getById(id);
       if (!product) {
-        product = await productQueries.getBySlug(req.params.id);
+        product = await productQueries.getBySlug(id);
       }
 
       if (!product) {
@@ -52,7 +66,13 @@ router.get(
   "/products/category/:category",
   asyncHandler(async (req: Request, res: Response) => {
     try {
-      const categoryProducts = await productQueries.getByCategory(req.params.category);
+      const category = ensureString(req.params.category);
+      if (!category) {
+        res.status(400).json({ error: "Category is required" });
+        return;
+      }
+
+      const categoryProducts = await productQueries.getByCategory(category);
       res.json({ products: categoryProducts });
     } catch (err) {
       logger.warn("Database unavailable, returning empty products");
@@ -65,7 +85,13 @@ router.get(
   "/products/search/:query",
   asyncHandler(async (req: Request, res: Response) => {
     try {
-      const searchResults = await productQueries.search(req.params.query);
+      const query = ensureString(req.params.query);
+      if (!query) {
+        res.status(400).json({ error: "Search query is required" });
+        return;
+      }
+
+      const searchResults = await productQueries.search(query);
       res.json({ products: searchResults });
     } catch (err) {
       logger.warn("Database unavailable for search");
@@ -92,6 +118,11 @@ router.post(
 
     if (!items?.length) {
       res.status(400).json({ error: "Cart is empty" });
+      return;
+    }
+
+    if (!customerEmail?.trim() || !customerName?.trim()) {
+      res.status(400).json({ error: "Customer email and name are required" });
       return;
     }
 
@@ -145,10 +176,9 @@ router.post(
 
     try {
       await orderQueries.create({
-        id: orderId,
         stripeSessionId: sessionId,
-        customerEmail,
-        customerName,
+        customerEmail: customerEmail.trim(),
+        customerName: customerName.trim(),
         shippingAddress,
         items,
         total,
@@ -159,8 +189,8 @@ router.post(
       inMemoryOrders.push({
         id: orderId,
         stripeSessionId: sessionId,
-        customerEmail,
-        customerName,
+        customerEmail: customerEmail.trim(),
+        customerName: customerName.trim(),
         shippingAddress,
         items,
         total,
@@ -226,8 +256,8 @@ router.post(
 router.get(
   "/track-order",
   asyncHandler(async (req: Request, res: Response) => {
-    const id = (req.query["id"] as string)?.trim();
-    const email = (req.query["email"] as string)?.trim().toLowerCase();
+    const id = ensureString(req.query["id"] as string | string[]);
+    const email = ensureString(req.query["email"] as string | string[]);
 
     if (!id || !email) {
       res.status(400).json({ error: "Order ID and email are required." });
@@ -237,7 +267,7 @@ router.get(
     try {
       const order = await orderQueries.getById(id);
 
-      if (!order || order.customerEmail !== email) {
+      if (!order || order.customerEmail !== email.toLowerCase()) {
         res.status(404).json({ error: "Order not found." });
         return;
       }
@@ -245,7 +275,9 @@ router.get(
       res.json({ order });
     } catch (err) {
       logger.warn("Database unavailable, checking in-memory orders");
-      const order = inMemoryOrders.find((o) => o.id === id && o.customerEmail === email);
+      const order = inMemoryOrders.find(
+        (o) => o.id === id && o.customerEmail === email.toLowerCase()
+      );
 
       if (!order) {
         res.status(404).json({ error: "Order not found." });

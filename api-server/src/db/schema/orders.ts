@@ -4,12 +4,10 @@
 
 import {
   pgTable,
-  text,
   integer,
   varchar,
   timestamp,
   json,
-  decimal,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -27,10 +25,15 @@ export const ordersTable = pgTable("orders", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const insertOrderSchema = createInsertSchema(ordersTable).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
+// Create insert schema and omit auto-generated fields
+export const insertOrderSchema = z.object({
+  customerEmail: z.string().email("Invalid email"),
+  customerName: z.string().min(1, "Customer name is required"),
+  shippingAddress: z.unknown(), // Required
+  items: z.unknown(), // Required
+  total: z.number().int().positive("Total must be positive"),
+  status: z.string().optional(),
+  stripeSessionId: z.string().optional().nullable(),
 });
 
 export type InsertOrder = z.infer<typeof insertOrderSchema>;
