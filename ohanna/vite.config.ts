@@ -19,10 +19,12 @@ export default defineConfig({
   },
   server: {
     port,
-    host: "localhost",
+    host: "0.0.0.0",
+    allowedHosts: true,
   },
   preview: {
     port,
-    host: "localhost",
+    host: "0.0.0.0",
+    allowedHosts: true,
   },
 });
