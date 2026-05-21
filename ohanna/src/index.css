@@ -158,6 +158,45 @@
   }
 }
 
+/* ===== OHANNA SECTION BACKGROUNDS (theme-aware) ===== */
+
+/* Paper — warm off-white / deep warm black */
+.section-paper { background-color: #FDF8EF; }
+.dark .section-paper { background-color: #1A1410; }
+
+/* Sand — warm tan / dark warm brown */
+.section-sand { background-color: #E4D5B7; }
+.dark .section-sand { background-color: #2A1E14; }
+
+/* Ink — near-black / deeper black */
+.section-ink { background-color: #1B1B1B; }
+.dark .section-ink { background-color: #0D0B09; }
+
+/* Gold — stays gold in both modes */
+.section-gold { background-color: #C89D29; }
+
+/* Hero gradient — sand-to-paper / dark version */
+.section-hero-gradient {
+  background: linear-gradient(160deg, #E4D5B7 0%, #FDF8EF 100%);
+}
+.dark .section-hero-gradient {
+  background: linear-gradient(160deg, #2A1E14 0%, #1A1410 100%);
+}
+
+/* ===== OHANNA SEMANTIC TEXT COLORS (theme-aware) ===== */
+
+/* Full heading text — dark in light, light in dark */
+.section-heading { color: #1B1B1B; }
+.dark .section-heading { color: #FDF8EF; }
+
+/* Body / secondary text */
+.section-muted { color: rgba(27, 27, 27, 0.68); }
+.dark .section-muted { color: rgba(253, 248, 239, 0.68); }
+
+/* Faint / tertiary text */
+.section-faint { color: rgba(27, 27, 27, 0.42); }
+.dark .section-faint { color: rgba(253, 248, 239, 0.42); }
+
 /* ===== OHANNA CUSTOM CLASSES ===== */
 
 /* The "hieroglyph" display font — Cinzel for Latin rendering of the brand voice */
@@ -215,7 +254,7 @@
 
 /* Main card style — clean with border and subtle shadow */
 .ohanna-card {
-  background: white;
+  background: #FDF8EF;
   border: 2px solid rgba(27,27,27,0.12);
   border-radius: 1rem;
   box-shadow: 0 2px 8px rgba(27,27,27,0.07);
@@ -243,7 +282,7 @@
   font-size: 0.875rem;
   line-height: 1.5;
   transition: border-color 0.15s, background 0.15s;
-  background: white;
+  background: #FDF8EF;
   color: #1B1B1B;
 }
 .ohanna-input:focus {
