@@ -97,9 +97,6 @@ export default function CommunityPage() {
         </div>
       </section>
 
-      {/* Wave: CTA → Footer */}
-      <WaveDivider from="ink" to="ink" variant={2} />
-
       <Footer />
     </div>
   );

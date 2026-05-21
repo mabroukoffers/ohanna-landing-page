@@ -254,7 +254,7 @@
 
 /* Main card style — clean with border and subtle shadow */
 .ohanna-card {
-  background: white;
+  background: #FDF8EF;
   border: 2px solid rgba(27,27,27,0.12);
   border-radius: 1rem;
   box-shadow: 0 2px 8px rgba(27,27,27,0.07);
@@ -282,7 +282,7 @@
   font-size: 0.875rem;
   line-height: 1.5;
   transition: border-color 0.15s, background 0.15s;
-  background: white;
+  background: #FDF8EF;
   color: #1B1B1B;
 }
 .ohanna-input:focus {
