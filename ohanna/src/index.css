@@ -162,25 +162,25 @@
 
 /* Paper — warm off-white / deep warm black */
 .section-paper { background-color: #FDF8EF; }
-.dark .section-paper { background-color: #171310; }
+.dark .section-paper { background-color: #1A1410; }
 
 /* Sand — warm tan / dark warm brown */
 .section-sand { background-color: #E4D5B7; }
-.dark .section-sand { background-color: #281D13; }
+.dark .section-sand { background-color: #2A1E14; }
 
 /* Ink — near-black / deeper black */
 .section-ink { background-color: #1B1B1B; }
-.dark .section-ink { background-color: #0F0D0A; }
+.dark .section-ink { background-color: #0D0B09; }
 
 /* Gold — stays gold in both modes */
 .section-gold { background-color: #C89D29; }
 
 /* Hero gradient — sand-to-paper / dark version */
 .section-hero-gradient {
-  background: linear-gradient(135deg, #E4D5B7 0%, #FDF8EF 100%);
+  background: linear-gradient(160deg, #E4D5B7 0%, #FDF8EF 100%);
 }
 .dark .section-hero-gradient {
-  background: linear-gradient(135deg, #281D13 0%, #171310 100%);
+  background: linear-gradient(160deg, #2A1E14 0%, #1A1410 100%);
 }
 
 /* ===== OHANNA SEMANTIC TEXT COLORS (theme-aware) ===== */

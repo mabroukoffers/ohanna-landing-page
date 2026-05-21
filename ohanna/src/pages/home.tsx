@@ -59,7 +59,7 @@ export default function HomePage() {
       <Navbar />
 
       {/* ── HERO ── */}
-      <section className="relative min-h-[90vh] flex items-center justify-center section-hero-gradient overflow-hidden">
+      <section className="relative min-h-[90vh] flex items-center justify-center section-sand overflow-hidden">
         {["𓂀", "𓅃", "𓋹", "𓊖", "𓏃", "𓁿"].map((g, i) => (
           <motion.div
             key={i}
