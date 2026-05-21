@@ -1,81 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { translations } from "@/i18n";
 
-type Lang = "en" | "ar";
-
-const translations = {
-  en: {
-    nav: {
-      collection: "COLLECTION",
-      story: "STORY",
-      culture: "CULTURE",
-      contact: "CONTACT",
-    },
-    notif: {
-      title: "Notifications",
-      markAll: "Mark all read",
-      n1Title: "New Drop!",
-      n1Msg: "ANKH TEE restocked — limited units",
-      n1Time: "2h ago",
-      n2Title: "Order Shipped",
-      n2Msg: "Order #OHN-1734 is on the way",
-      n2Time: "1d ago",
-      n3Title: "Flash Sale",
-      n3Msg: "20% off all Hoodies this weekend",
-      n3Time: "3d ago",
-    },
-    auth: {
-      login: "Login",
-      register: "Register",
-      loginTitle: "Welcome back",
-      registerTitle: "Join OHANNA",
-      email: "Email",
-      password: "Password",
-      fullName: "Full Name",
-      forgotPassword: "Forgot password?",
-      submitLogin: "Sign In",
-      submitRegister: "Create Account",
-      loginFooter: "No account yet?",
-      registerFooter: "Already have an account?",
-    },
-  },
-  ar: {
-    nav: {
-      collection: "المجموعة",
-      story: "قصتنا",
-      culture: "الثقافة",
-      contact: "تواصل",
-    },
-    notif: {
-      title: "الإشعارات",
-      markAll: "تعيين الكل كمقروء",
-      n1Title: "وصول جديد!",
-      n1Msg: "تيشيرت ANKH عاد — كميات محدودة",
-      n1Time: "منذ ساعتين",
-      n2Title: "تم الشحن",
-      n2Msg: "طلبك #OHN-1734 في الطريق إليك",
-      n2Time: "منذ يوم",
-      n3Title: "تخفيضات سريعة",
-      n3Msg: "خصم 20% على الهوديز نهاية الأسبوع",
-      n3Time: "منذ 3 أيام",
-    },
-    auth: {
-      login: "تسجيل الدخول",
-      register: "إنشاء حساب",
-      loginTitle: "مرحباً بعودتك",
-      registerTitle: "انضم إلى أوهانا",
-      email: "البريد الإلكتروني",
-      password: "كلمة المرور",
-      fullName: "الاسم الكامل",
-      forgotPassword: "نسيت كلمة المرور؟",
-      submitLogin: "دخول",
-      submitRegister: "إنشاء الحساب",
-      loginFooter: "ليس لديك حساب؟",
-      registerFooter: "لديك حساب بالفعل؟",
-    },
-  },
-} as const;
-
-type TranslationKey = string;
+export type Lang = "en" | "ar";
 
 function getNestedValue(obj: Record<string, unknown>, keys: string[]): string {
   let current: unknown = obj;
@@ -92,7 +18,7 @@ function getNestedValue(obj: Record<string, unknown>, keys: string[]): string {
 interface LangContextValue {
   lang: Lang;
   toggleLang: () => void;
-  t: (key: TranslationKey) => string;
+  t: (key: string) => string;
   isRTL: boolean;
 }
 
@@ -126,7 +52,7 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
 
   const toggleLang = () => setLang((l) => (l === "en" ? "ar" : "en"));
 
-  const t = (key: TranslationKey): string => {
+  const t = (key: string): string => {
     const keys = key.split(".");
     return getNestedValue(
       translations[lang] as unknown as Record<string, unknown>,

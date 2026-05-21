@@ -2,6 +2,8 @@ import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import WaveDivider from "@/components/ui/wave-divider";
 import { Ruler } from "lucide-react";
+import { SEO } from "@/components/seo/seo";
+import { SEO_DATA } from "@/lib/seo-data";
 
 const TOPS_SIZES = [
   { size: "XS", chest: "86–91", shoulder: "42", length: "66", sleeve: "59" },
@@ -24,6 +26,7 @@ const BOTTOMS_SIZES = [
 export default function SizeGuidePage() {
   return (
     <div className="min-h-screen section-paper flex flex-col">
+      <SEO {...SEO_DATA.sizeGuide} />
       <Navbar />
 
       {/* ── HEADER ── */}

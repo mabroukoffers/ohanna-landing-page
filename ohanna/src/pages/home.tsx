@@ -11,7 +11,11 @@ import WaveDivider from "@/components/ui/wave-divider";
 import ProductCard from "@/components/product/product-card";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
-import { PRODUCTS, BADGE_STYLES } from "@/lib/products-data";
+import { SEO } from "@/components/seo/seo";
+import { SEO_DATA } from "@/lib/seo-data";
+import { PRODUCTS } from "@/lib/products-data";
+import { useLang } from "@/contexts/lang-context";
+import { translations } from "@/i18n";
 
 const FEATURED = PRODUCTS.filter((p) =>
   ["BESTSELLER", "NEW", "LIMITED"].includes(p.badge),
@@ -24,13 +28,6 @@ const TESTIMONIALS = [
   { name: "ROHIT T.", location: "Giza", quote: "Wearing Ohanna is like carrying the power of pharaohs in my DNA.", rating: 5 },
   { name: "KAVYA R.", location: "Aswan", quote: "The quality and cultural depth of Ohanna is unmatched.", rating: 5 },
   { name: "SARA M.", location: "Hurghada", quote: "Ancient symbols, modern rebellion. This is my uniform.", rating: 5 },
-];
-
-const STATS = [
-  { value: "10K+", label: "MODERN PHARAOHS" },
-  { value: "5000+", label: "YEARS OF HERITAGE" },
-  { value: "12+", label: "SACRED PIECES" },
-  { value: "4.9★", label: "COMMUNITY RATING" },
 ];
 
 function FadeUp({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -50,12 +47,16 @@ function FadeUp({ children, delay = 0, className = "" }: { children: React.React
 }
 
 export default function HomePage() {
+  const { t, lang } = useLang();
+  const homeT = translations[lang].home;
+
   const handleHeroShop = () => {
     toast.success("Entering the sacred collection... 𓋹");
   };
 
   return (
     <div className="min-h-screen section-paper overflow-x-hidden">
+      <SEO {...SEO_DATA.home} />
       <Navbar />
 
       {/* ── HERO ── */}
@@ -85,24 +86,23 @@ export default function HomePage() {
               transition={{ duration: 0.6 }}
             >
               <Badge className="bg-[#C89D29] text-[#1B1B1B] sketchy-border text-sm px-4 py-2 mb-4">
-                ANCIENT POWER
+                {t("home.badge")}
               </Badge>
               <h1 className="text-5xl md:text-7xl font-black leading-tight hieroglyph-font hieroglyph-shadow section-heading">
-                REVIVING
+                {t("home.heroTitle1")}
                 <br />
                 <motion.span
                   className="text-[#C89D29] inline-block"
                   animate={{ scale: [1, 1.03, 1] }}
                   transition={{ duration: 3, repeat: Infinity }}
                 >
-                  ROOTS
+                  {t("home.heroTitle2")}
                 </motion.span>
                 <br />
-                IN STYLE
+                {t("home.heroTitle3")}
               </h1>
               <p className="text-lg section-muted max-w-lg leading-relaxed mt-4">
-                Where pharaonic heritage meets street rebellion. Ohanna brings
-                5000 years of ancient Egyptian power to modern urban fashion.
+                {t("home.heroDesc")}
               </p>
             </motion.div>
 
@@ -118,7 +118,7 @@ export default function HomePage() {
                   className="bg-[#1B1B1B] text-[#FDF8EF] hover:bg-[#C89D29] hover:text-[#1B1B1B] dark:bg-[#FDF8EF] dark:text-[#1B1B1B] dark:hover:bg-[#C89D29] sketchy-button text-base px-8 py-4 font-black"
                 >
                   <ShoppingBag className="h-5 w-5 mr-2" />
-                  SHOP THE CULTURE
+                  {t("common.shopTheCulture")}
                 </Button>
               </Link>
               <Link href="/story">
@@ -127,7 +127,7 @@ export default function HomePage() {
                   size="lg"
                   className="border-2 border-[#1B1B1B] dark:border-[#FDF8EF] section-heading hover:bg-[#1B1B1B] hover:text-[#FDF8EF] dark:hover:bg-[#FDF8EF] dark:hover:text-[#1B1B1B] sketchy-button text-base px-8 py-4 font-black bg-transparent"
                 >
-                  DISCOVER STORY
+                  {t("common.discoverStory")}
                 </Button>
               </Link>
             </motion.div>
@@ -138,7 +138,7 @@ export default function HomePage() {
               transition={{ delay: 0.4 }}
               className="flex items-center gap-6 flex-wrap pt-2"
             >
-              {STATS.map((s, i) => (
+              {homeT.stats.map((s, i) => (
                 <div key={i} className="text-center">
                   <div className="text-xl font-black text-[#C89D29]">{s.value}</div>
                   <div className="text-[10px] section-faint font-bold tracking-wider hieroglyph-font">{s.label}</div>
@@ -190,9 +190,9 @@ export default function HomePage() {
               <Eye className="h-8 w-8 text-[#C89D29]" />
               <div className="h-1 w-14 bg-[#C89D29] sketchy-line" />
             </div>
-            <h2 className="text-4xl md:text-6xl font-black hieroglyph-font mb-3 section-heading">SACRED STREETWEAR</h2>
+            <h2 className="text-4xl md:text-6xl font-black hieroglyph-font mb-3 section-heading">{t("home.sacredTitle")}</h2>
             <p className="section-muted max-w-xl mx-auto">
-              Each piece carries the power of ancient symbols into modern rebellion
+              {t("home.sacredDesc")}
             </p>
           </FadeUp>
 
@@ -208,7 +208,7 @@ export default function HomePage() {
                 size="lg"
                 className="bg-[#1B1B1B] text-[#FDF8EF] hover:bg-[#C89D29] hover:text-[#1B1B1B] dark:bg-[#FDF8EF] dark:text-[#1B1B1B] dark:hover:bg-[#C89D29] sketchy-button font-black px-10"
               >
-                VIEW FULL COLLECTION
+                {t("common.viewCollection")}
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
             </Link>
@@ -225,29 +225,28 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <FadeUp>
               <Badge className="bg-[#1B1B1B] dark:bg-[#FDF8EF] text-[#FDF8EF] dark:text-[#1B1B1B] sketchy-border text-sm px-4 py-2 mb-4">
-                THE OHANNA LEGACY
+                {t("home.legacyBadge")}
               </Badge>
               <h2 className="text-4xl md:text-6xl font-black hieroglyph-font mb-6 section-heading">
-                FROM ANCIENT
+                {t("home.legacyTitle1")}
                 <br />
-                <span className="text-[#C89D29]">TEMPLES</span>
+                <span className="text-[#C89D29]">{t("home.legacyTitle2")}</span>
                 <br />
-                TO STREET
+                {t("home.legacyTitle3")}
               </h2>
               <p className="section-muted leading-relaxed mb-6">
-                Born from the fusion of 5000-year-old Egyptian heritage and contemporary urban
-                culture, Ohanna represents the eternal power of ancient symbols in modern form.
+                {t("home.legacyDesc")}
               </p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center sketchy-border section-paper p-4">
                   <Pyramid className="h-7 w-7 text-[#C89D29] mx-auto mb-2" />
-                  <div className="font-black hieroglyph-font text-sm section-heading">HERITAGE</div>
-                  <div className="text-xs section-faint">Ancient Roots</div>
+                  <div className="font-black hieroglyph-font text-sm section-heading">{t("home.heritage")}</div>
+                  <div className="text-xs section-faint">{t("home.heritageDesc")}</div>
                 </div>
                 <div className="text-center sketchy-border section-paper p-4">
                   <Zap className="h-7 w-7 text-[#C89D29] mx-auto mb-2" />
-                  <div className="font-black hieroglyph-font text-sm section-heading">REBELLION</div>
-                  <div className="text-xs section-faint">Modern Edge</div>
+                  <div className="font-black hieroglyph-font text-sm section-heading">{t("home.rebellion")}</div>
+                  <div className="text-xs section-faint">{t("home.rebellionDesc")}</div>
                 </div>
               </div>
             </FadeUp>
@@ -276,23 +275,23 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <FadeUp className="text-center mb-14">
             <h2 className="text-4xl md:text-5xl font-black hieroglyph-font mb-3 text-[#FDF8EF]">
-              MODERN PHARAOHS<br /><span className="text-[#C89D29]">OF THE STREET</span>
+              {t("home.pharaohsTitle1")}<br /><span className="text-[#C89D29]">{t("home.pharaohsTitle2")}</span>
             </h2>
           </FadeUp>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {TESTIMONIALS.map((t, i) => (
+            {TESTIMONIALS.map((testimonial, i) => (
               <FadeUp key={i} delay={i * 0.07}>
                 <div className="section-paper rounded-2xl border border-[#FDF8EF]/20 dark:border-[#FDF8EF]/10 p-5 h-full shadow-lg">
                   <div className="flex text-[#C89D29] mb-3">
-                    {[...Array(t.rating)].map((_, j) => (
+                    {[...Array(testimonial.rating)].map((_, j) => (
                       <Star key={j} className="h-3.5 w-3.5 fill-current" />
                     ))}
                   </div>
-                  <p className="text-sm section-muted italic mb-4 leading-relaxed">"{t.quote}"</p>
+                  <p className="text-sm section-muted italic mb-4 leading-relaxed">"{testimonial.quote}"</p>
                   <div>
-                    <p className="font-black hieroglyph-font text-xs section-heading">{t.name}</p>
-                    <p className="text-xs section-faint">{t.location}, Egypt</p>
+                    <p className="font-black hieroglyph-font text-xs section-heading">{testimonial.name}</p>
+                    <p className="text-xs section-faint">{testimonial.location}, Egypt</p>
                   </div>
                 </div>
               </FadeUp>
@@ -309,19 +308,19 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <FadeUp className="text-center max-w-3xl mx-auto space-y-6">
             <h2 className="text-4xl md:text-6xl font-black hieroglyph-font text-[#1B1B1B]">
-              CLAIM YOUR<br /><span className="text-[#FDF8EF]">PHARAOH STATUS</span>
+              {t("home.ctaTitle1")}<br /><span className="text-[#FDF8EF]">{t("home.ctaTitle2")}</span>
             </h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/collection">
                 <Button size="lg" className="bg-[#1B1B1B] text-[#FDF8EF] hover:bg-[#FDF8EF] hover:text-[#1B1B1B] sketchy-button font-black px-10 py-5 text-base">
                   <Crown className="h-5 w-5 mr-2" />
-                  SHOP COLLECTION
+                  {t("common.shopCollection")}
                 </Button>
               </Link>
               <Link href="/culture">
                 <Button variant="outline" size="lg" className="border-2 border-[#1B1B1B] text-[#1B1B1B] hover:bg-[#1B1B1B] hover:text-[#FDF8EF] sketchy-button font-black px-10 py-5 text-base bg-transparent">
                   <Users className="h-5 w-5 mr-2" />
-                  JOIN COMMUNITY
+                  {t("home.joinCommunity")}
                 </Button>
               </Link>
             </div>

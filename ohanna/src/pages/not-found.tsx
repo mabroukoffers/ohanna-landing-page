@@ -2,6 +2,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { useTheme } from "@/contexts/theme-context";
+import { useLang } from "@/contexts/lang-context";
+import { SEO } from "@/components/seo/seo";
+import { SEO_DATA } from "@/lib/seo-data";
 
 const HIEROGLYPHS = ["𓂀", "𓃀", "𓆣", "𓇯", "𓈖", "𓊽", "𓋹", "𓌀", "𓍯", "𓎛", "𓏌", "𓐍"];
 
@@ -33,15 +36,17 @@ function BgGlyph({ glyph, delay, x, y }: { glyph: string; delay: number; x: numb
 export default function NotFound() {
   const [cycleIdx, setCycleIdx] = useState(0);
   const { theme } = useTheme();
+  const { t } = useLang();
   const isDark = theme === "dark";
 
   useEffect(() => {
-    const t = setInterval(() => setCycleIdx((n) => (n + 1) % HIEROGLYPHS.length), 1800);
-    return () => clearInterval(t);
+    const timer = setInterval(() => setCycleIdx((n) => (n + 1) % HIEROGLYPHS.length), 1800);
+    return () => clearInterval(timer);
   }, []);
 
   return (
     <div className="min-h-screen bg-[#FDF8EF] dark:bg-[#1A1410] flex items-center justify-center overflow-hidden relative py-8">
+      <SEO {...(SEO_DATA.notFound as any)} />
 
       {/* Ambient glow */}
       <div
@@ -86,14 +91,12 @@ export default function NotFound() {
               </motion.span>
             </AnimatePresence>
           </div>
-          {/* Inner orbit */}
           <motion.div
             className="absolute rounded-full border border-[#C89D29]/18"
             style={{ inset: "-9px" }}
             animate={{ rotate: 360 }}
             transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
           />
-          {/* Outer orbit */}
           <motion.div
             className="absolute rounded-full"
             style={{ inset: "-18px", border: isDark ? "1px solid rgba(253,248,239,0.05)" : "1px solid rgba(27,27,27,0.05)" }}
@@ -138,7 +141,7 @@ export default function NotFound() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          THE SCROLL IS LOST
+          {t("pages.notFound.tagline")}
         </motion.p>
 
         {/* Divider */}
@@ -160,7 +163,7 @@ export default function NotFound() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.72 }}
         >
-          This page was claimed by the desert sands. The ancient path you seek no longer exists — or perhaps it never did.
+          {t("pages.notFound.body")}
         </motion.p>
 
         {/* CTA buttons */}
@@ -177,7 +180,7 @@ export default function NotFound() {
               whileTap={{ scale: 0.97 }}
               transition={{ type: "spring", stiffness: 400 }}
             >
-              ← RETURN HOME
+              {t("common.returnHome")}
             </motion.span>
           </Link>
           <Link href="/collection">
@@ -187,7 +190,7 @@ export default function NotFound() {
               whileTap={{ scale: 0.97 }}
               transition={{ type: "spring", stiffness: 400 }}
             >
-              VIEW COLLECTION
+              {t("common.viewColl")}
             </motion.span>
           </Link>
         </motion.div>

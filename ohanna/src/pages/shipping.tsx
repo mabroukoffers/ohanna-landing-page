@@ -2,6 +2,9 @@ import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import WaveDivider from "@/components/ui/wave-divider";
 import { Truck, RotateCcw, Shield } from "lucide-react";
+import { SEO } from "@/components/seo/seo";
+import { SEO_DATA } from "@/lib/seo-data";
+import { useLang } from "@/contexts/lang-context";
 
 const EGYPT_ZONES = [
   { zone: "Cairo & Giza", time: "2–3 business days", cost: "EGP 50", express: "Same-day available" },
@@ -21,15 +24,17 @@ const INTERNATIONAL_ZONES = [
 ];
 
 export default function ShippingPage() {
+  const { t } = useLang();
   return (
     <div className="min-h-screen section-paper flex flex-col">
+      <SEO {...SEO_DATA.shipping} />
       <Navbar />
 
       {/* ── HEADER ── */}
       <section className="py-16 section-sand">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl sm:text-6xl font-black hieroglyph-font mb-4 section-heading">
-            SHIPPING & <span className="text-[#C89D29]">RETURNS</span>
+            {t("pages.shipping.heroTitle")} <span className="text-[#C89D29]">{t("pages.shipping.heroTitleGold")}</span>
           </h1>
         </div>
       </section>

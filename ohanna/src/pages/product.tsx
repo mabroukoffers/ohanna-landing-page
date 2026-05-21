@@ -8,6 +8,8 @@ import Footer from "@/components/layout/footer";
 import ProductCard from "@/components/product/product-card";
 import { useCart } from "@/contexts/cart-context";
 import { getProductById, fmt, BADGE_STYLES, PRODUCTS } from "@/lib/products-data";
+import { SEO } from "@/components/seo/seo";
+import { getProductSEO } from "@/lib/seo-data";
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 
@@ -23,6 +25,8 @@ export default function ProductPage({ id }: { id: string }) {
   const [selectedSize, setSelectedSize] = useState<string>("M");
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+
+  const productSEO = product ? getProductSEO({ id: product.id, name: product.name, description: product.description, price: product.price, images: [product.imageUrl], badge: product.badge, category: product.category }) : null;
 
   if (!product) {
     return (
@@ -55,6 +59,7 @@ export default function ProductPage({ id }: { id: string }) {
 
   return (
     <div className="min-h-screen bg-[#FDF8EF] dark:bg-[#1A1410] flex flex-col">
+      {productSEO && <SEO {...productSEO} />}
       <Navbar />
       <main className="flex-1 py-10">
         <div className="container mx-auto px-4 max-w-5xl">

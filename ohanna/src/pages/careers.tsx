@@ -2,6 +2,8 @@ import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import WaveDivider from "@/components/ui/wave-divider";
 import { Briefcase, Heart, Zap, Users } from "lucide-react";
+import { SEO } from "@/components/seo/seo";
+import { SEO_DATA } from "@/lib/seo-data";
 
 const OPENINGS = [
   { title: "Senior Graphic Designer", dept: "Creative", location: "Cairo, Egypt", type: "Full-time", desc: "Design premium Egyptian streetwear graphics, seasonal collections, and brand identity materials.", skills: ["Adobe Illustrator", "Photoshop", "Brand design", "Typography"] },
@@ -20,6 +22,7 @@ const PERKS = [
 export default function CareersPage() {
   return (
     <div className="min-h-screen section-paper flex flex-col">
+      <SEO {...SEO_DATA.careers} />
       <Navbar />
 
       {/* ── HERO ── */}
